@@ -25,12 +25,12 @@ tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 3), min_df=0, stop_words='
 
 ignored_project_id = 169
 
-projectsFile = '../Data/project_data'
+projectsFile = '../../data/raw/project_data'
 all_projects = pd.read_pickle(projectsFile)
 
 filtered_projects = all_projects[all_projects['project_id'] != ignored_project_id]
 
-profilesProjects = pd.read_pickle('../Data/useful_profile_project_adj')
+profilesProjects = pd.read_pickle('../../data/processed/useful_profile_project_adj')
 
 start = time.time()
 

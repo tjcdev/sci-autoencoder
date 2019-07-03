@@ -13,11 +13,11 @@ def item(id):
     return ds.loc[ds['project_id'] == int(id)].iloc[0][field]
 
 # Load the projects into a pandas dataframe
-projects = pd.read_pickle("../Data/project_data")
+projects = pd.read_pickle("../../data/raw/project_data")
 tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 3), min_df=0, stop_words='english')
 
 # Adjency matrix
-profiles_projects = pd.read_pickle("../Data/profiles_projects")
+profiles_projects = pd.read_pickle("../../data/processed/profiles_projects")
 
 # Get all projects the profile has participated with
 profile_projects = list(profiles_projects[profiles_projects['profile'] == user_id]['project'])
