@@ -9,7 +9,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 '''
 def load_data():
     # Load the full project data from the pickle file
-    projects = pd.read_pickle("scistarterdata/project_data")
+    projects = pd.read_pickle("../../../data/raw/project_data")
     
     # Get the TF-IDF for the description fields
     v = TfidfVectorizer()
