@@ -4,7 +4,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import traceback
 
 # Load the projects into a pandas dataframe
-ds = pd.read_pickle("../../data/raw/project_data")
+ds = pd.read_pickle("../../../data/raw/project_data")
 tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 3), min_df=0, stop_words='english')
 
 # Calculate our TF-IDF
