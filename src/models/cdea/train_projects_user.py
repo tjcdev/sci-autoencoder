@@ -3,7 +3,7 @@ np.random.seed(0)
 from time import gmtime, strftime
 
 import CDAE
-import sci_projects_user
+import load_data
 import metrics
 from keras.models import Model
 from sklearn.metrics.pairwise import cosine_similarity
@@ -15,10 +15,10 @@ from scipy.sparse import vstack
 
 from sklearn.metrics import precision_recall_fscore_support
 
-batch_size = int(sys.argv[1])
-epochs = int(sys.argv[2])
-embedding_size = int(sys.argv[3])
-num_users = int(sys.argv[4])
+batch_size = 4 #int(sys.argv[1])
+epochs = 1 #int(sys.argv[2])
+embedding_size = 10 #int(sys.argv[3])
+num_users = 10 #int(sys.argv[4])
 
 def evaluate_user_threshold(user_projects, similarity_matrix, project_ids):
     # Percentage of done projects to set to 0
@@ -104,12 +104,12 @@ def get_top_N(user_projects, similarity_matrix, project_ids):
     return indices_of_done_projects, similar_items[['project_id', 'similarity_score']]
 
 # Load the proejct data
-train_projects, train_x, test_projects, test_x, train_project_ids, test_project_ids = sci_projects_user.load_projects()
+train_projects, train_x, test_projects, test_x, train_project_ids, test_project_ids = load_data.load_projects()
 train_x_projects = np.array(train_projects, dtype=np.int32).reshape(len(train_projects), 1)
 test_x_projects = np.array(test_projects, dtype=np.int32).reshape(len(test_projects), 1)
 
 # Load the users projects
-users_projects = sci_projects_user.load_user()
+users_projects = load_data.load_user()
 
 # Create our model
 model = CDAE.create(I=train_x.shape[1], U=len(train_projects)+1, K=embedding_size,

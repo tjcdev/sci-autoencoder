@@ -3,7 +3,7 @@ np.random.seed(0)
 from time import gmtime, strftime
 
 import CDAE
-import sci_projects
+import load_data
 import metrics
 from keras.models import Model
 from sklearn.metrics.pairwise import cosine_similarity
