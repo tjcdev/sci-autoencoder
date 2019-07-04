@@ -9,8 +9,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 '''
 def load_projects():
     # Load the full project data from the pickle file
-    projects = pd.read_pickle("../../../data/raw/project_data")
-    
+    projects = pd.read_pickle("./data/raw/project_data")
+
     # Get the TF-IDF for the description fields
     v = TfidfVectorizer()
     desc_idf = v.fit_transform(projects['title'])
@@ -33,16 +33,9 @@ def load_projects():
 def load_user():
     # Load the adjacency matrix for users and projects
     # Note: these are only for users who have interacted with multiple projects
-    users_projects =  pd.read_pickle('../../../data/processed/multiple_profile_all_projects')
+    users_projects =  pd.read_pickle('./data/processed/active_profile_projects')
+
+    users_projects = users_projects.drop(columns=['profile'])
 
     return users_projects
-    '''
-    # Pick out the user we want to work with
-    user_projects = users_projects[users_projects['profile'] == user_id]
-
-    if len(user_projects) == 0:
-        return None
-
-    return user_projects.drop(columns=['profile'])
-    '''
     
