@@ -11,44 +11,23 @@ import pandas as pd
 
 from scipy.sparse import vstack
 
-from sklearn.metrics import precision_recall_fscore_support
-
 class Recommender:
-    def __init__(self, user_projects, similarity_matrix, project_ids):
-        self.user_projects = user_projects
-        self.similarity_matrix = similarity_matrix
+    def __init__(self, project_ids):
         self.project_ids = project_ids
 
-    def evaluate(self):
-        indices_of_done_projects, top_N = self.top_projects() # get_top_N(np.array(self.user_projects, copy=True), similarity_matrix, project_ids)
-        top_N_project_ids = list(top_N['project_id'])
+    def similarity(self, users_embeddings):
+        # Calculate our Cosine Similarity Matrix
+        similarity_matrix= pd.DataFrame(cosine_similarity(
+            X=users_embeddings),
+            index=self.project_ids)
 
-        # Filter out
-        self.user_projects[indices_of_done_projects] = 0
-        y_true = self.user_projects
+        return similarity_matrix
 
-        project_ids = list(self.similarity_matrix.index)
-
-        y_pred = [project_id in top_N_project_ids for project_id in project_ids]*1
-        
-        # Check the predicted projects and the true projects
-        ones_idx = np.nonzero(y_true)
-        true_projects = np.array(project_ids)[np.array(ones_idx).flatten()]
-        true_ones = len(np.array(ones_idx).flatten())
-
-        ones_idx = np.nonzero(y_pred)
-        pred_projects = np.array(project_ids)[np.array(ones_idx).flatten()]
-        pred_ones = len(np.array(ones_idx).flatten())
-
-        precision, recall, fscore, support = precision_recall_fscore_support(y_true, y_pred, average='binary', pos_label=1)
-
-        return precision, recall
-
-    def top_projects(self):
+    def top_projects(self, similarity_matrix, user_projects):
         # Cut out some of the projects that are done to test our model
         perc_projects = 0.2
 
-        user_projects = np.array(self.user_projects, copy=True)
+        user_projects = np.array(user_projects, copy=True)
 
         ones_idx = np.nonzero(user_projects)
         num_ones = len(np.array(ones_idx).flatten())
@@ -58,7 +37,7 @@ class Recommender:
 
         # Calculate the similarity between user and projects
         num_projects = np.count_nonzero(user_projects)
-        user_projects_sim = np.sum(user_projects * self.similarity_matrix.values, axis=1) / num_projects
+        user_projects_sim = np.sum(user_projects * similarity_matrix.values, axis=1) / num_projects
 
         similar_items = pd.DataFrame(user_projects_sim)
         similar_items.columns = ['similarity_score']
@@ -75,3 +54,21 @@ class Recommender:
         similar_items = similar_items.sort_values('similarity_score', ascending=False)
         similar_items = similar_items.head(N)
         return indices_of_done_projects, similar_items[['project_id', 'similarity_score']]
+
+    def predictions(self, user_projects, done_projects, top_projects):
+        # Filter out projects that have already been done
+        user_projects[done_projects] = 0
+        y_true = user_projects
+
+        y_pred = [project_id in list(top_projects['project_id']) for project_id in self.project_ids]*1
+        
+        # Check the predicted projects and the true projects
+        ones_idx = np.nonzero(y_true)
+        true_projects = np.array(self.project_ids)[np.array(ones_idx).flatten()]
+        true_ones = len(np.array(ones_idx).flatten())
+
+        ones_idx = np.nonzero(y_pred)
+        pred_projects = np.array(self.project_ids)[np.array(ones_idx).flatten()]
+        pred_ones = len(np.array(ones_idx).flatten())
+
+        return y_true, y_pred
