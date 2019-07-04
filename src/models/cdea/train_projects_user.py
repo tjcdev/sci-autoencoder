@@ -9,6 +9,8 @@ from keras.models import Model
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 
+from recommender import Recommender
+
 import sys
 
 from scipy.sparse import vstack
@@ -19,89 +21,6 @@ batch_size = 4 #int(sys.argv[1])
 epochs = 1 #int(sys.argv[2])
 embedding_size = 10 #int(sys.argv[3])
 num_users = 10 #int(sys.argv[4])
-
-def evaluate_user_threshold(user_projects, similarity_matrix, project_ids):
-    # Percentage of done projects to set to 0
-    perc_projects = 0.1
-
-    # Cut out some of the projects that are done to test our model
-    ones_idx = np.nonzero(user_projects)
-    indices_to_cut = np.random.choice(len(ones_idx), int(np.ceil(perc_projects * len(ones_idx))), replace=False)
-    user_projects[indices_to_cut] = 0
-
-    # Calculate the similarity between user and projects
-    num_projects = np.count_nonzero(user_projects)
-    if num_projects == 0:
-        num_projects = 1
-    user_projects_sim = np.sum(user_projects * similarity_matrix.values, axis=1) / num_projects
-
-    similar_items = pd.DataFrame(user_projects_sim)
-    similar_items.columns = ['similarity_score']
-    similar_items['project_id'] = project_ids
-
-    # Measure the Precision and Recall
-    y_true = user_projects
-    predictions = np.array(similar_items['similarity_score'])
-    y_pred = (predictions > 0.2)*1
-
-    precision, recall, fscore, support = precision_recall_fscore_support(y_true, y_pred, average='macro')
-
-    return precision, recall
-
-def evaluate_user_top_N(user_projects, similarity_matrix, project_ids):
-    indices_of_done_projects, top_N = get_top_N(np.array(user_projects, copy=True), similarity_matrix, project_ids)
-    top_N_project_ids = list(top_N['project_id'])
-
-    # Filter out
-    user_projects[indices_of_done_projects] = 0
-    y_true = user_projects
-
-    project_ids = list(similarity_matrix.index)
-
-    y_pred = [project_id in top_N_project_ids for project_id in project_ids]*1
-    
-    # Check the predicted projects and the true projects
-    ones_idx = np.nonzero(y_true)
-    true_projects = np.array(project_ids)[np.array(ones_idx).flatten()]
-    true_ones = len(np.array(ones_idx).flatten())
-
-    ones_idx = np.nonzero(y_pred)
-    pred_projects = np.array(project_ids)[np.array(ones_idx).flatten()]
-    pred_ones = len(np.array(ones_idx).flatten())
-
-    precision, recall, fscore, support = precision_recall_fscore_support(y_true, y_pred, average='binary', pos_label=1)
-
-    return precision, recall
-
-
-def get_top_N(user_projects, similarity_matrix, project_ids):
-    # Cut out some of the projects that are done to test our model
-    perc_projects = 0.2
-    ones_idx = np.nonzero(user_projects)
-    num_ones = len(np.array(ones_idx).flatten())
-    to_cut = np.random.choice(num_ones, int(np.ceil(perc_projects * num_ones)), replace=False)
-    ones_indices_to_cut = np.array(ones_idx).flatten()[to_cut]
-    user_projects[ones_indices_to_cut] = 0
-
-    # Calculate the similarity between user and projects
-    num_projects = np.count_nonzero(user_projects)
-    user_projects_sim = np.sum(user_projects * similarity_matrix.values, axis=1) / num_projects
-
-    similar_items = pd.DataFrame(user_projects_sim)
-    similar_items.columns = ['similarity_score']
-    similar_items['project_id'] = project_ids
-
-    # Filter out projects already done (only if we are not doing the precision and recall)
-    indices_of_done_projects = list(np.nonzero(user_projects))[0]
-    done_projects = similar_items.iloc[indices_of_done_projects]
-    # TODO: check that this definitely removes the projects that have been done already
-    similar_items = similar_items[~similar_items['project_id'].isin(list(done_projects['project_id']))]
-
-    # Pick the Top-N item
-    N = max([20, to_cut.shape[0]*4])
-    similar_items = similar_items.sort_values('similarity_score', ascending=False)
-    similar_items = similar_items.head(N)
-    return indices_of_done_projects, similar_items[['project_id', 'similarity_score']]
 
 # Load the proejct data
 train_projects, train_x, test_projects, test_x, train_project_ids, test_project_ids = load_data.load_projects()
@@ -155,7 +74,8 @@ for index, user_projects in users_projects.iloc[:num_users].iterrows():
     # test_user_projects = user_projects[len(train_project_ids):]
 
     # precision, recall = evaluate_user_threshold(test_user_projects, similarity_matrix, test_project_ids)
-    precision, recall = evaluate_user_top_N(user_projects, similarity_matrix, x_project_ids)
+    rec = Recommender(user_projects, similarity_matrix, x_project_ids) 
+    precision, recall = rec.evaluate()
 
     if (isinstance(precision, float) and isinstance(recall, float)):
         precisions = precisions + [precision]
