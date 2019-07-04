@@ -35,7 +35,7 @@ def load_user():
     # Note: these are only for users who have interacted with multiple projects
     users_projects =  pd.read_pickle('./data/processed/active_profile_projects')
 
-    # users_projects = users_projects.drop(columns=['profile'])
+    users_projects = users_projects.drop(columns=['profile'])
 
     return users_projects
     

@@ -69,7 +69,7 @@ cnt = 0
 for index, user_projects in users_projects.iloc[:num_users].iterrows():
     cnt += 1
     print(str(cnt) + '/' + str(len(users_projects)))
-    user_projects = np.array(user_projects.values[1:].tolist())
+    user_projects = np.array(user_projects.values.tolist())
     # train_user_projects = user_projects[:len(train_project_ids)]
     # test_user_projects = user_projects[len(train_project_ids):]
 
