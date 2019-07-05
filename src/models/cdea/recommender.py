@@ -2,9 +2,15 @@ import numpy as np
 np.random.seed(0)
 from time import gmtime, strftime
 
-import CDAE
-import load_data
-import metrics
+import os
+import sys
+module_path = os.path.abspath(os.path.join('../../'))
+if module_path not in sys.path:
+    sys.path.append(module_path)
+
+import src.models.cdea.CDAE
+import src.models.cdea.load_data
+import src.models.cdea.metrics
 from keras.models import Model
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
