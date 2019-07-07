@@ -8,23 +8,21 @@ module_path = os.path.abspath(os.path.join('../../'))
 if module_path not in sys.path:
     sys.path.append(module_path)
 
-'''
-import src.models.cdea.CDAE
-import src.models.cdea.load_data
-import src.models.cdea.metrics
-'''
+
 import CDAE
 import load_data
 import metrics
+
 from keras.models import Model
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
+import math
 
 from scipy.sparse import vstack
 
 class Recommender:
-    def __init__(self, projects, project_ids, users_projects_matrix):
-        self.project_ids = project_ids
+    def __init__(self, projects, users_projects_matrix):
+        self.project_ids = list(projects['project_id'])
         self.users_projects_matrix = users_projects_matrix
         self.projects = projects
 
@@ -36,7 +34,7 @@ class Recommender:
 
         return similarity_matrix
 
-    def top_projects(self, user_projects_list):
+    def top_projects(self, user_projects_list, similarity_matrix):
         # Get user id
         user_id = user_projects_list['profile']
 
@@ -71,7 +69,7 @@ class Recommender:
         # Order the projects by similarity
         similar_items = pd.DataFrame(user_projects_sim)
         similar_items.columns = ['similarity_score']
-        similar_items['project_id'] = projects['project_id']
+        similar_items['project_id'] = self.projects['project_id']
         similar_items = similar_items.sort_values('similarity_score', ascending=False)
 
         # Pick the Top-N item
@@ -80,14 +78,16 @@ class Recommender:
 
         return after_cutoff, similar_items
 
-    def predictions(self, after_cutoff):
+    def predictions(self, after_cutoff, similar_items):
         y_true = np.zeros(self.projects.shape[0])
         after_cutoff = np.array(after_cutoff, dtype=int)
 
-        y_true[after_cutoff] = 1
+        after_cutoff_idx = self.projects.index[self.projects['project_id'].isin(after_cutoff)].tolist()
+
+        y_true[after_cutoff_idx] = 1
 
         y_pred = np.zeros(self.projects.shape[0])
-        predicted_projects = np.array(self.similar_items.index, dtype=int)
+        predicted_projects = np.array(similar_items.index, dtype=int)
         y_pred[predicted_projects] = 1
 
         return y_true, y_pred

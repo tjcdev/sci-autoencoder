@@ -1,9 +1,9 @@
 from sklearn.metrics import precision_recall_fscore_support
-
+import numpy as np
 '''
     Evaluate the performance of our recommender systems
 '''
-def evaluate(y_true, y_pred, similarity_matrix = None):
+def evaluate(y_true, y_pred, similar_items, similarity_matrix = None):
     precision, recall, fscore, support = precision_recall_fscore_support(y_true, y_pred, average='binary', pos_label=1)
 
     refined_precision = None
