@@ -16,7 +16,7 @@ from scipy import sparse
 '''
 def load_projects():
     # Load the full project data from the pickle file
-    projects = pd.read_pickle("../../data/raw/project_data")
+    projects = pd.read_pickle("../../../data/raw/project_data")
 
     # Get the TF-IDF for the description fields
     v = TfidfVectorizer()
@@ -40,7 +40,7 @@ def load_projects():
 def load_user():
     # Load the adjacency matrix for users and projects
     # Note: these are only for users who have interacted with multiple projects
-    users_projects =  sparse.load_npz('../../data/processed/active_profile_projects_matrix.npz')
+    users_projects =  sparse.load_npz('../../../data/processed/active_profile_projects_matrix.npz')
 
     return users_projects
     

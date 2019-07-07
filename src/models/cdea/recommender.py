@@ -8,9 +8,14 @@ module_path = os.path.abspath(os.path.join('../../'))
 if module_path not in sys.path:
     sys.path.append(module_path)
 
+'''
 import src.models.cdea.CDAE
 import src.models.cdea.load_data
 import src.models.cdea.metrics
+'''
+import CDAE
+import load_data
+import metrics
 from keras.models import Model
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
