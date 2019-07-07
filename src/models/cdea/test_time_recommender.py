@@ -18,8 +18,12 @@ projects = pd.read_pickle('data/raw/project_data')
 users_projects_matrix =  pd.read_pickle('data/processed/active_profile_projects')
 similarity_matrix = pd.read_pickle('data/processed/similarity_matrix')
 
+max_sim = np.max(np.max(similarity_matrix))
+
 # Normalise the similarity
 similarity_matrix = (similarity_matrix + 1) / 2
+
+max_sim = np.max(np.max(similarity_matrix))
 
 # Setup our recommender
 rec = Recommender(projects, users_projects_matrix)
@@ -33,7 +37,7 @@ num_uniques = lambda x: len(set([i for i in x if not math.isnan(i)]))
 users_projects_list['num_projects'] = users_projects_list['projects'].apply(num_uniques)
 
 # Loop over a certain number of users
-for index, user_projects_list in users_projects_list[users_projects_list['num_projects'] > 1].iloc[:10].iterrows():
+for index, user_projects_list in users_projects_list[users_projects_list['num_projects'] > 1].iloc[:1].iterrows():
     # Get the top projects
     after_cutoff, similar_items = rec.top_projects(user_projects_list, similarity_matrix)
 
