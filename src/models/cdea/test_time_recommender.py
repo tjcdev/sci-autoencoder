@@ -17,10 +17,10 @@ import load_data as load_data
 embedding_size = int(sys.argv[1])
 
 # Load all the data we need
-users_projects_list = pd.read_pickle('../../../data/processed/profile_projects_time_consistent')
-projects = pd.read_pickle('../../../data/raw/project_data')
-users_projects_matrix =  pd.read_pickle('../../../data/processed/active_profile_projects')
-similarity_matrix = pd.read_pickle('../../../data/processed/similarity_matrix_'+str(embedding_size))
+users_projects_list = pd.read_pickle('data/processed/profile_projects_time_consistent')
+projects = pd.read_pickle('data/raw/project_data')
+users_projects_matrix =  pd.read_pickle('data/processed/active_profile_projects')
+similarity_matrix = pd.read_pickle('data/processed/similarity_matrix_'+str(embedding_size))
 
 max_sim = np.max(np.max(similarity_matrix))
 
