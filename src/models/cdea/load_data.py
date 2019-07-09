@@ -3,12 +3,6 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-import os
-import sys
-module_path = os.path.abspath(os.path.join('../../../'))
-if module_path not in sys.path:
-    sys.path.append(module_path)
-
 from scipy import sparse
 '''
     This class will load in the projects data, convert it to TF-IDF vectors
@@ -16,7 +10,7 @@ from scipy import sparse
 '''
 def load_projects():
     # Load the full project data from the pickle file
-    projects = pd.read_pickle("../../data/raw/project_data")
+    projects = pd.read_pickle("project_data")
 
     # Get the TF-IDF for the description fields
     v = TfidfVectorizer()
@@ -40,7 +34,7 @@ def load_projects():
 def load_user():
     # Load the adjacency matrix for users and projects
     # Note: these are only for users who have interacted with multiple projects
-    users_projects =  sparse.load_npz('../../data/processed/active_profile_projects_matrix.npz')
+    users_projects =  sparse.load_npz('data/processed/active_profile_projects_matrix.npz')
 
     return users_projects
     

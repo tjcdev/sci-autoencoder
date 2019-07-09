@@ -8,15 +8,19 @@ from keras.models import Model
 from scipy.sparse import vstack
 import math
 
+import sys
+
 from evaluate import evaluate
 from timerecommender import Recommender
 import load_data as load_data
 
+embedding_size = int(sys.argv[1])
+
 # Load all the data we need
-users_projects_list = pd.read_pickle('data/processed/profile_projects_time_consistent')
-projects = pd.read_pickle('data/raw/project_data')
-users_projects_matrix =  pd.read_pickle('data/processed/active_profile_projects')
-similarity_matrix = pd.read_pickle('data/processed/similarity_matrix')
+users_projects_list = pd.read_pickle('../../../data/processed/profile_projects_time_consistent')
+projects = pd.read_pickle('../../../data/raw/project_data')
+users_projects_matrix =  pd.read_pickle('../../../data/processed/active_profile_projects')
+similarity_matrix = pd.read_pickle('../../../data/processed/similarity_matrix_'+str(embedding_size))
 
 max_sim = np.max(np.max(similarity_matrix))
 
@@ -37,7 +41,7 @@ num_uniques = lambda x: len(set([i for i in x if not math.isnan(i)]))
 users_projects_list['num_projects'] = users_projects_list['projects'].apply(num_uniques)
 
 # Loop over a certain number of users
-for index, user_projects_list in users_projects_list[users_projects_list['num_projects'] > 1].iloc[:1].iterrows():
+for index, user_projects_list in users_projects_list[users_projects_list['num_projects'] > 1].iloc[:100].iterrows():
     # Get the top projects
     after_cutoff, similar_items = rec.top_projects(user_projects_list, similarity_matrix)
 

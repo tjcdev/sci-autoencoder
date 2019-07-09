@@ -5,11 +5,11 @@ import metrics
 import sys
 
 from sklearn.metrics import precision_recall_fscore_support
+import numpy as np
 
-batch_size = 4 #int(sys.argv[1])
-epochs = 1 #int(sys.argv[2])
-embedding_size = 10 #int(sys.argv[3])
-num_users = 10 #int(sys.argv[4])
+batch_size = int(sys.argv[1])
+epochs = int(sys.argv[2])
+embedding_size = int(sys.argv[3])
 
 # Load the proejct data
 train_projects, train_x, test_projects, test_x, train_project_ids, test_project_ids = load_data.load_projects()
@@ -29,4 +29,5 @@ history = model.fit(x=[train_x, train_x_projects], y=train_x,
                     validation_data=[[test_x, test_x_projects], test_x])
 
 # Save the model
-model.save('autoencoder.h5')
+model_name = 'autoencoder_' + str(embedding_size) + '.h5'
+model.save(model_name)
