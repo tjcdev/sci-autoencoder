@@ -10,11 +10,11 @@ from scipy import sparse
 '''
 def load_projects():
     # Load the full project data from the pickle file
-    projects = pd.read_pickle("project_data")
+    projects = pd.read_pickle("data/processed/project_data")
 
     # Get the TF-IDF for the description fields
     v = TfidfVectorizer()
-    desc_idf = v.fit_transform(projects['title'])
+    desc_idf = v.fit_transform(projects['description'])
 
     # Split into train and test set
     split_idx = int(np.floor((desc_idf).shape[0] * 0.8))
