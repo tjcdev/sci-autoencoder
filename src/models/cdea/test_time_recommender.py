@@ -18,7 +18,7 @@ embedding_size = int(sys.argv[1])
 
 # Load all the data we need
 users_projects_list = pd.read_pickle('data/processed/profile_projects_time_consistent')
-projects = pd.read_pickle('data/raw/project_data')
+projects = pd.read_pickle('data/processed/project_data')
 users_projects_matrix =  pd.read_pickle('data/processed/active_profile_projects')
 similarity_matrix = pd.read_pickle('data/processed/similarity_matrix_'+str(embedding_size))
 
