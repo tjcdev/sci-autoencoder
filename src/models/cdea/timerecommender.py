@@ -40,7 +40,7 @@ class Recommender:
 
         return similarity_matrix
 
-    def top_projects(self, user_projects_list, similarity_matrix):
+    def top_projects(self, user_projects_list, similarity_matrix, k):
         # Get user id
         user_id = user_projects_list['profile']
 
@@ -79,8 +79,7 @@ class Recommender:
         similar_items = similar_items.sort_values('similarity_score', ascending=False)
 
         # Pick the Top-N item
-        N = 5 # TODO: change this number to be the correct number of projects
-        similar_items = similar_items.head(N)
+        similar_items = similar_items.head(k)
 
         return after_cutoff, similar_items
 

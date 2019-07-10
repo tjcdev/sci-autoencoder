@@ -35,7 +35,7 @@ class Recommender:
 
         return similarity_matrix
 
-    def top_projects(self, similarity_matrix, user_projects):
+    def top_projects(self, similarity_matrix, user_projects, k):
         # Cut out some of the projects that are done to test our model
         perc_projects = 0.2
 
@@ -62,7 +62,7 @@ class Recommender:
         similar_items = similar_items[~similar_items['project_id'].isin(list(done_projects['project_id']))]
 
         # Pick the Top-N item
-        N = max([20, to_cut.shape[0]*4])
+        N = k
         similar_items = similar_items.sort_values('similarity_score', ascending=False)
         similar_items = similar_items.head(N)
         return indices_of_done_projects, similar_items[['project_id', 'similarity_score']]

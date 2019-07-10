@@ -10,9 +10,11 @@ from keras.models import Model
 from scipy.sparse import vstack
 import load_data
 
-num_users = 10
+num_users = 1000
 
-model = load_model('autoencoder.h5')
+emedding_size = int(sys.argv[1])
+
+model = load_model('autoencoder_' + str(emedding_size) + '.h5')
 
 # Load the proejct data
 train_projects, train_x, test_projects, test_x, train_project_ids, test_project_ids = load_data.load_projects()
@@ -58,7 +60,7 @@ for index, user_projects in users_projects.iloc[:num_users].iterrows():
         precisions = precisions + [precision]
         recalls = recalls + [recall]
 
-fileName = 'cdea-results' + strftime("%Y-%m-%d-%H-%M-%S", gmtime()) + '.txt'
+fileName = 'cdea-results-' + str(embedding_size) + '_' + strftime("%Y-%m-%d-%H-%M-%S", gmtime()) + '.txt'
 f = open(fileName,"w+")
 for i in range(0, len(precisions)):
     f.write('{ epoch: %s, precision: %s, recall: %s },' % (str(i), str(precisions[i]), str(recalls[i])))
