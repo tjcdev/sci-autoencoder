@@ -26,6 +26,8 @@ x_users = train_users + test_users
 
 embedding_size = model.get_layer('embedding_layer').output_shape[2]
 
+# TODO: remove some movies from the users "watched list"
+
 embeddings = embed_model.predict(x=[x, np.array(x_users, dtype=np.int32).reshape(len(x_users), 1)])
 embeddings = embeddings.reshape(len(x_users), embedding_size)
 
@@ -62,3 +64,5 @@ print(recommended_projects)
 
 recommended_projects = list(set(recommended_projects) - set(known_user_projects))[:k]
 print(recommended_projects)
+
+# TODO: compare these projects with the users known watched list (that we help out at the start)
