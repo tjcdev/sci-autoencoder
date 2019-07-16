@@ -15,7 +15,7 @@ from scipy import sparse
 '''
 def load_projects():
     # Load the full project data from the pickle file
-    projects = pd.read_pickle("data/processed/project_data")
+    projects = pd.read_pickle("../../data/processed/project_data")
 
     # Get the TF-IDF for the description fields
     v = TfidfVectorizer()
