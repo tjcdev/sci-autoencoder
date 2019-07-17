@@ -64,11 +64,13 @@ precisions, recalls, fscore, support = precision_recall_fscore_support(y_true, y
 precision_string = ', '.join([str(prec) for prec in precisions])
 recall_string = ', '.join([str(recall) for recall in recalls])
 
+np.save('autoencoder_cf_sci_y_pred_' + str(embedding_size) + '_' + str(recommendations) + '.npy', y_pred)
+
 # Save the model
-model_name = 'autoencoder_cf_sci_' + str(embedding_size) + '.h5'
+model_name = 'autoencoder_cf_sci_' + str(embedding_size) + '_' + str(recommendations) + '.h5'
 model.save(model_name)
 
-fileName = 'cf-sci-results-' + str(embedding_size) + '_' + strftime("%Y-%m-%d-%H-%M-%S", gmtime()) + '.txt'
+fileName = 'cf-sci-results-' + str(embedding_size) + '_' + str(recommendations) +  '_' + strftime("%Y-%m-%d-%H-%M-%S", gmtime()) + '.txt'
 f = open(fileName,"w+")
 f.write('{"precision": [' + precision_string + '],')
 f.write('"recall": [' + recall_string + ']}')
