@@ -3,6 +3,13 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from gensim.models import doc2vec
+from collections import namedtuple
+import pandas as pd
+from tqdm import tqdm
+from scipy import spatial
+from sklearn.metrics.pairwise import cosine_similarity
+
 # Movie Lens Imports
 from keras.utils.data_utils import get_file
 from keras.utils.np_utils import to_categorical
@@ -13,9 +20,47 @@ from scipy import sparse
     This class will load in the projects data, convert it to TF-IDF vectors
     and then autoencoder these vectors
 '''
+def load_projects_doc2vec():
+    # Load the full project data from the pickle file
+    projects = pd.read_pickle("data/processed/project_data")
+
+    # Get the Doc2Vec for the description fields
+    # Transform data (you can add more data preprocessing steps) 
+    docs = []
+    analyzedDocument = namedtuple('AnalyzedDocument', 'words tags')
+    for idx, project in projects.iterrows():
+        words = project['description'].lower().split()
+        tags = [project['project_id']]
+        docs.append(analyzedDocument(words, tags))
+    
+    model = doc2vec.Doc2Vec(docs, min_count = 3, workers = 4)
+
+    desc_idf = []
+    for idx, project in projects.iterrows():
+        vector = model.infer_vector(project['description'])
+        desc_idf = desc_idf + [vector]
+
+    desc_idf = np.array(desc_idf)
+
+    # Split into train and test set
+    split_idx = int(np.floor((desc_idf).shape[0] * 0.8))
+
+    train_x = desc_idf[:split_idx]
+    # train_users = list(projects['project_id'].iloc[:split_idx])
+    train_users = list(np.arange(0, split_idx))
+   
+    test_x = desc_idf[split_idx:]
+    # test_users = list(projects['project_id'].iloc[split_idx:])
+    test_users = list(np.arange(0, (desc_idf).shape[0]-split_idx))
+
+    project_ids = list(projects['project_id'])
+
+    return train_users, train_x, test_users, test_x, project_ids[:split_idx], project_ids[split_idx:]
+
+
 def load_projects():
     # Load the full project data from the pickle file
-    projects = pd.read_pickle("../../data/processed/project_data")
+    projects = pd.read_pickle("data/processed/project_data")
 
     # Get the TF-IDF for the description fields
     v = TfidfVectorizer()
