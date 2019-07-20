@@ -53,7 +53,7 @@ test = sparse.load_npz("test.npz")
 recommender = Recommender()
 similarity_matrix = recommender.similarity(embeddings)
 
-fileName = 'data/raw-experiment-results/results-' + autoencoder_model + '_' + str(embedding_size) + '.json'
+fileName = 'data/raw-experiment-results/results-' + autoencoder_model + '_' + str(k) + '.json'
 f = open(fileName,"w+")
 # Clear the current contents of the file
 f.truncate(0)
