@@ -17,15 +17,20 @@ from content_recommender import Recommender
 from data_models.cf_data import load_users_projects
 from data_models.content_data import load_projects_tfidf
 
-k = 5 # int(sys.argv[1])
-# TODO: pass in autoencoder to use
-# TODO: pass in the embedding type (tfidf or doc2vec) to use
+k = int(sys.argv[1])
+autoencoder_model =  str(sys.argv[2]) # 'autoencoder_32_cdae_tfidf_desc'
+dataSource = str(sys.argv[3]) # 'tfidf_desc' 
 
 # Load the autoencoder to use
-autoencoder = load_model('data/autoencoders/autoencoder_32_cdae_tfidf_desc.h5')
+autoencoder = load_model('data/autoencoders/' + autoencoder_model + '.h5')
 
 # Load the project data
-project_train_labels, project_train_x, project_val_labels, project_val_x, project_test_labels, project_test_x = load_projects_tfidf()
+loadData = None
+if dataSource == 'tfidf_desc':
+    loadData = load_projects_tfidf
+if dataSource == 'doc2vec_desc':
+    loadData = load_projects_doc2vec
+project_train_labels, project_train_x, project_val_labels, project_val_x, project_test_labels, project_test_x = loadData()
 
 # Generate the embeddings
 embed_model = Model(inputs=autoencoder.input, outputs=autoencoder.get_layer('embedding_layer').output)
@@ -48,7 +53,7 @@ test = sparse.load_npz("test.npz")
 recommender = Recommender()
 similarity_matrix = recommender.similarity(embeddings)
 
-fileName = 'results-' + str(embedding_size) + '_' + '.json'
+fileName = 'data/raw-experiment-results/results-' + autoencoder_model + '_' + str(embedding_size) + '.json'
 f = open(fileName,"w+")
 # Clear the current contents of the file
 f.truncate(0)
