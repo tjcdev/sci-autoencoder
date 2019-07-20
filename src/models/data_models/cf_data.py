@@ -10,6 +10,8 @@ from tqdm import tqdm
 from scipy import spatial
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy import sparse
+from scipy.sparse import vstack
+import math
 
 # Movie Lens Imports
 from keras.utils.data_utils import get_file
@@ -19,9 +21,51 @@ from zipfile import ZipFile
 def load_users_projects():
     # Load the adjacency matrix for users and projects
     # Note: these are only for users who have interacted with multiple projects
-    users_projects =  sparse.load_npz('data/processed/active_profile_projects_matrix.npz')
+    users_projects =  pd.read_pickle('data/processed/active_profile_projects')
+    users_projects_list = pd.read_pickle('data/processed/profile_projects_time_consistent')
+    
+    train = sparse.csr_matrix([])
+    test = sparse.csr_matrix([])
 
-    return users_projects
+    useful_users_projects_list = users_projects_list[users_projects_list['profile'].isin(list(users_projects['profile']))]
+
+
+    for index, user_projects_list in useful_users_projects_list.iterrows():
+        print(str(index) + '/' + str(len(users_projects_list)))
+        # Get user id
+        user_id = user_projects_list['profile']
+
+        # Get list of projects
+        projects_list = [val for val in user_projects_list['projects'] if not math.isnan(val)]
+
+        # Get the adjacency vector for this user
+        adj_matrix = users_projects[users_projects['profile'] == user_id]
+        adj_matrix = adj_matrix.drop(columns=['profile'])
+        if adj_matrix.shape[0] == 0:
+            continue
+
+        # Cut out projects that occured after the 80% time step
+        cutoff_idx = int(np.ceil(len(projects_list)*0.8))
+
+        # Project Ids of projects before the cutoff
+        before_cutoff = list(set(projects_list[:cutoff_idx]))
+
+        # Project Ids of projects after the cutoff
+        after_cutoff = list(set(projects_list[cutoff_idx:]))
+
+        # Figure out which projects to cut out of the 
+        projects_to_cut = np.setdiff1d(after_cutoff, before_cutoff)
+    
+        adj_matrix[projects_to_cut] = 0
+        train = vstack([train, adj_matrix.values])
+
+        test_adj_matrix = adj_matrix.copy()
+        for col in test_adj_matrix.columns:
+            test_adj_matrix[col].values[:] = 0
+        test_adj_matrix[projects_to_cut] = 1
+        test = vstack([test, test_adj_matrix.values])
+
+    return train, test
     
 
 def load_movies():

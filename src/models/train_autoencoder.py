@@ -2,8 +2,8 @@
 from cdea import CDAE
 
 # Importing our data models
-from content_data import load_projects_doc2vec, load_projects_tfidf
-from cf_data import load_users_projects, load_movies
+from data_models.content_data import load_projects_doc2vec, load_projects_tfidf
+from data_models.cf_data import load_users_projects, load_movies
 
 # Import some standard python libraries
 import numpy as np
@@ -16,15 +16,15 @@ batch_size = 128 # int(sys.argv[1])
 epochs = 2 # int(sys.argv[2])
 embedding_size = 32 # int(sys.argv[3])
 autoencoder_type = 'cdae' # str(sys.argv[4])
-dataSource = 'tfidf-desc' # str(sys.argv[5])
+dataSource = 'tfidf_desc' # str(sys.argv[5])
 
 # Setup the methods for loading the data
 loadData = None
-if dataSource == 'tfidf-desc':
+if dataSource == 'tfidf_desc':
     loadData = load_projects_tfidf
-if dataSource == 'doc2vec-desc':
+if dataSource == 'doc2vec_desc':
     loadData = load_projects_doc2vec
-if dataSource == 'users-projects':
+if dataSource == 'users_projects':
     loadData = load_users_projects
 if dataSource == 'movies':
     loadData = load_movies
