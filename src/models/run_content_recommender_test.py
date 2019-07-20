@@ -52,7 +52,7 @@ fileName = 'results-' + str(embedding_size) + '_' + '.json'
 f = open(fileName,"w+")
 # Clear the current contents of the file
 f.truncate(0)
-f.write('{ "results": [')
+f.write('[')
 for i in range(1, 10): #train.shape[0]):
     # Get the top projects that were predicted
     top_projects = recommender.top_projects(train.getrow(i), test.getrow(i), similarity_matrix, k)
@@ -63,8 +63,14 @@ for i in range(1, 10): #train.shape[0]):
     # Evaluate our model
     precision, recall, refined_precision = evaluate(y_true, y_pred, top_projects, similarity_matrix)
 
-    y_pred_string = '[' + ', '.join(y_pred.astype('str')) + ']'
-    y_true_string = '[' + ', '.join(y_true.astype('str')) + ']'
+    things1 = np.nonzero(y_pred)[0].astype('str')
+    things2 = np.nonzero(y_true)[0].astype('str')
+    y_pred_string = '[' + ', '.join(things1) + ']'
+    y_true_string = '[' + ', '.join(things2) + ']'
+
+    if math.isnan(refined_precision):
+        refined_precision = -1
+
     # Write the results to a JSON file
     f.write('{ "user_index": %s, "precision": %s, "recall": %s, "refined_precision": %s, "y_pred": %s, "y_true": %s },' % (str(i), str(precision), str(recall), str(refined_precision), y_pred_string, y_true_string))
 
@@ -73,5 +79,7 @@ f.seek(f.tell() - 1, os.SEEK_SET)
 f.write('')
 
 # Close the results file
-f.write(']}')
+f.write(']')
 f.close()
+
+print("-------TEST COMPLETE--------")
