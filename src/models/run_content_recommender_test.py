@@ -58,7 +58,7 @@ f = open(fileName,"w+")
 # Clear the current contents of the file
 f.truncate(0)
 f.write('[')
-for i in range(1, 10): #train.shape[0]):
+for i in range(1, train.shape[0]):
     # Get the top projects that were predicted
     top_projects = recommender.top_projects(train.getrow(i), test.getrow(i), similarity_matrix, k)
 
