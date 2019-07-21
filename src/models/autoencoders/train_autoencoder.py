@@ -57,7 +57,7 @@ history = model.fit(x=[train_x, labels.index], y=train_x,
                     validation_data=[[val_x, labels.index], val_x])
 
 # Save history and model
-name = "autoencoder_%s_%s_%s" % (str(embedding_size), autoencoder_type, dataSource)
+name = "train_autoencoder_%s_%s_%s" % (str(embedding_size), autoencoder_type, dataSource)
 
 with open('data/raw-experiment-results/' + name + '.json', 'w') as f:
     json.dump(history.history, f)
