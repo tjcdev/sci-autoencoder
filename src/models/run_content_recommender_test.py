@@ -17,9 +17,9 @@ from content_recommender import Recommender
 from data_models.cf_data import load_users_projects
 from data_models.content_data import load_projects_tfidf
 
-k = int(sys.argv[1])
-autoencoder_model =  str(sys.argv[2]) # 'autoencoder_32_cdae_tfidf_desc'
-dataSource = str(sys.argv[3]) # 'tfidf_desc' 
+k = 5 #int(sys.argv[1])
+autoencoder_model = 'autoencoder_32_cdae_tfidf_desc' # str(sys.argv[2]) # 'autoencoder_32_cdae_tfidf_desc'
+dataSource = 'tfidf_desc' #str(sys.argv[3]) # 'tfidf_desc' 
 
 # Load the autoencoder to use
 autoencoder = load_model('data/autoencoders/' + autoencoder_model + '.h5')
@@ -40,14 +40,8 @@ embedding_size = autoencoder.get_layer('embedding_layer').output_shape[2]
 embeddings = embed_model.predict(x=[x, np.array(x_projects.index, dtype=np.int32).reshape(len(x_projects), 1)])
 embeddings = embeddings.reshape(len(x_projects), embedding_size)
 
-# Load the users projects
-# train, test = load_users_projects()
-
-# sparse.save_npz("train.npz", train)
-# sparse.save_npz("test.npz", test)
-
-train = sparse.load_npz("train.npz")
-test = sparse.load_npz("test.npz")
+train = sparse.load_npz("data/processed/train.npz")
+test = sparse.load_npz("data/processed/test.npz")
 
 # Build our recommender and similarity matrix
 recommender = Recommender()

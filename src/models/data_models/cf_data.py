@@ -56,6 +56,9 @@ def load_users_projects():
         # Figure out which projects to cut out of the 
         projects_to_cut = np.setdiff1d(after_cutoff, before_cutoff)
     
+        if len(projects_to_cut) == 0:
+            continue
+
         adj_matrix[projects_to_cut] = 0
         train = vstack([train, adj_matrix.values])
 
