@@ -17,7 +17,7 @@ batch_size = 128 # int(sys.argv[1])
 epochs = 2 # int(sys.argv[2])
 embedding_size = 32 # int(sys.argv[3])
 autoencoder_type = 'cdae' # str(sys.argv[4])
-dataSource = 'tfidf_desc' # str(sys.argv[5])
+dataSource = 'users_projects' # str(sys.argv[5])
 
 # Load the data
 loadData = None
@@ -28,9 +28,7 @@ if dataSource == 'doc2vec_desc':
     train_labels, train_x, val_labels, val_x, test_labels, test_x = load_projects_doc2vec()
 
 if dataSource == 'users_projects':
-    # We read this data from a file because splitting the data is a time intensive task
-    
-    loadData = load_users_projects
+    train_labels, train_x, val_labels, val_x, test_labels, test_x = load_users_projects()
 
 if dataSource == 'movies':
     loadData = load_movies

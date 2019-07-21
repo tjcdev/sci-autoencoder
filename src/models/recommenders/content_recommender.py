@@ -12,7 +12,7 @@ import pandas as pd
 import math
 from scipy.sparse import vstack
 
-class Recommender:
+class ContentRecommender:
     def __init__(self):
         print("Recommender")
 
