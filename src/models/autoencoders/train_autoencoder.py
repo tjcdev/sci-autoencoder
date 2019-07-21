@@ -1,15 +1,15 @@
-# Importing all our autoencoder models
-from cdea import CDAE
-
-# Importing our data models
-from data_models.content_data import load_projects_doc2vec, load_projects_tfidf
-from data_models.cf_data import load_users_projects, load_movies
-
 # Import some standard python libraries
 import numpy as np
 import os
 import sys
 import json
+
+
+# Importing all our autoencoder models
+import CDAE
+
+# Importing our data models
+from content_data import load_projects_doc2vec, load_projects_tfidf, load_users_projects, load_movies
 
 # Input Parameters for training our autoencoder
 batch_size = 128 # int(sys.argv[1])
