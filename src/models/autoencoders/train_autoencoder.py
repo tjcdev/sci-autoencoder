@@ -8,7 +8,7 @@ import json
 import CDAE
 
 # Importing our data models
-sys.path.append('/Users/thomascartwright/Documents/Development/sci-autoencoder/src/models/data_models')
+sys.path.append('/Users/thomascartwright/Documents/Development/sci-autoencoder/src/data/data_models')
 from content_data import load_projects_doc2vec, load_projects_tfidf 
 from cf_data import load_users_projects, load_movies, load_profile_labels
 

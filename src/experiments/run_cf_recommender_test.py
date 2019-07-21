@@ -10,6 +10,7 @@ import math
 import keras.backend as K
 
 sys.path.append('/Users/thomascartwright/Documents/Development/sci-autoencoder/src/models')
+sys.path.append('/Users/thomascartwright/Documents/Development/sci-autoencoder/data')
 from recommenders.cf_recommender import CFRecommender
 from data_models.cf_data import load_users_projects
 
