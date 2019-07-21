@@ -4,12 +4,13 @@ import os
 import sys
 import json
 
-
 # Importing all our autoencoder models
 import CDAE
 
 # Importing our data models
-from content_data import load_projects_doc2vec, load_projects_tfidf, load_users_projects, load_movies
+sys.path.append('/Users/thomascartwright/Documents/Development/sci-autoencoder/src/models/data_models')
+from content_data import load_projects_doc2vec, load_projects_tfidf 
+from cf_data import load_users_projects, load_movies
 
 # Input Parameters for training our autoencoder
 batch_size = 128 # int(sys.argv[1])
@@ -18,23 +19,25 @@ embedding_size = 32 # int(sys.argv[3])
 autoencoder_type = 'cdae' # str(sys.argv[4])
 dataSource = 'tfidf_desc' # str(sys.argv[5])
 
-# Setup the methods for loading the data
+# Load the data
 loadData = None
 if dataSource == 'tfidf_desc':
-    loadData = load_projects_tfidf
+    train_labels, train_x, val_labels, val_x, test_labels, test_x = load_projects_tfidf()
+
 if dataSource == 'doc2vec_desc':
-    loadData = load_projects_doc2vec
+    train_labels, train_x, val_labels, val_x, test_labels, test_x = load_projects_doc2vec()
+
 if dataSource == 'users_projects':
+    # We read this data from a file because splitting the data is a time intensive task
+    
     loadData = load_users_projects
+
 if dataSource == 'movies':
     loadData = load_movies
 
 autoencoder = None
 if autoencoder_type == 'cdae':
     autoencoder = CDAE
-
-# Load the proejct data
-train_labels, train_x, val_labels, val_x, test_labels, test_x = loadData()
 
 # Create our autoencoder model
 model = autoencoder.create(I=train_x.shape[1], U=train_labels.shape[0] + val_labels.shape[0] + test_labels.shape[0], K=embedding_size,
