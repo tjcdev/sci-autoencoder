@@ -1,4 +1,5 @@
 import scipy.sparse as sparse
+import numpy as np
 
 class CFRecommender:
     def __init__(self, k):
@@ -15,7 +16,7 @@ class CFRecommender:
         predicted_vector[done_idx] = 0
 
         # Get the indices of the top projects
-        y_pred_indices = y_pred_floats.argsort()[-k:][::-1]
+        y_pred_indices = predicted_vector.reshape(projects.shape[0]).argsort()[-self.k:][::-1]
 
         # return the project_ids of the top recommendations
         return projects.iloc[y_pred_indices]
@@ -25,14 +26,14 @@ class CFRecommender:
     '''
     def generate_y(self, top_projects, all_projects, val_x, test_x):
         # Generate the y_true
-        true_idx = all_projects.loc[top_projects].index
-        y_true = np.zeros(len(all_projects))
-        y_true[project_idx] = 1
-
-        # Geneate y_pred
-        x = val_x + test_x
-        predicted_idx = x.nonzero()
+        predicted_idx = np.asarray(top_projects.index)
         y_pred = np.zeros(len(all_projects))
         y_pred[predicted_idx] = 1
+
+        # Geneate y_true
+        x = val_x + test_x
+        true_idx = x.nonzero()[0]
+        y_true = np.zeros(len(all_projects))
+        y_true[true_idx] = 1
 
         return y_true, y_pred

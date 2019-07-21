@@ -19,18 +19,23 @@ from keras.utils.np_utils import to_categorical
 from zipfile import ZipFile
 
 def load_users_projects():
-    cf_projects = pd.read_pickle('data/processed/cf_projects.pkl')
-    
+    cf = pd.read_pickle('data/processed/cf_projects.pkl')
+    #cf = pd.read_pickle('data/processed/cf_profiles.pkl')
+
     train_x = sparse.load_npz("data/processed/train_sparse.npz")
     val_x = sparse.load_npz("data/processed/val_sparse.npz")
     test_x = sparse.load_npz("data/processed/test_sparse.npz")
     
-    train_labels = cf_projects
-    val_labels = cf_projects
-    test_labels = cf_projects
+    train_labels = cf
+    val_labels = cf
+    test_labels = cf
 
     return train_labels, train_x, val_labels, val_x, test_labels, test_x
 
+def load_profile_labels():
+    cf_profiles = pd.read_pickle('data/processed/cf_profiles.pkl')
+
+    return cf_profiles
 
 def load_movies():
     '''

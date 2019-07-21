@@ -1,1 +1,5 @@
 data/raw/*
+notebooks/data-processing/test_cf.pkl
+notebooks/data-processing/train_cf.pkl
+notebooks/data-processing/val_cf.pkl
+data/processed/train_cf.pkl

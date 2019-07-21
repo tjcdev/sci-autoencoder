@@ -2,19 +2,19 @@ import os
 import sys
 from time import gmtime, strftime
 
+from keras.models import load_model
 from sklearn.metrics import precision_recall_fscore_support
 import numpy as np
 import pandas as pd
 import math
 import keras.backend as K
 
-from recommenders import CFRecommender
-import CDAE as CDAE
-import load_data as load_data
-import metrics as metrics
+sys.path.append('/Users/thomascartwright/Documents/Development/sci-autoencoder/src/models')
+from recommenders.cf_recommender import CFRecommender
+from data_models.cf_data import load_users_projects
 
 k = 5 #int(sys.argv[1])
-autoencoder_model = 'autoencoder_32_cdae_tfidf_desc' # str(sys.argv[2]) # 'autoencoder_32_cdae_tfidf_desc'
+autoencoder_model = 'autoencoder_32_cdae_users_projects' # str(sys.argv[2]) # 'autoencoder_32_cdae_tfidf_desc'
 dataSource = 'tfidf_desc' #str(sys.argv[3]) # 'tfidf_desc' 
 
 # Load the autoencoder to use
@@ -25,11 +25,18 @@ train_labels, train_x, val_labels, val_x, test_labels, test_x = load_users_proje
 
 recommender = CFRecommender(k)
 
+fileName = 'data/raw-experiment-results/' + autoencoder_model + '_' + str(k) + '.json'
+f = open(fileName,"w+")
+# Clear the current contents of the file
+f.truncate(0)
+f.write('[')
+
 for profile_idx in range(0, train_x.shape[1]):
-    profile_col = train_x.getcol(profile_idx)
+    profile_col = np.squeeze(np.asarray(train_x.getcol(profile_idx).todense())).reshape(1,-1)
+    labels = np.asarray(train_labels.index)
 
     # Make a prediction for 
-    predictions = model.predict([profile_col, train_labels.index])
+    predictions = model.predict([profile_col, labels])
 
     # Get the Top-K Recommendataions
     recommendations = recommender.top_projects(profile_col, predictions, train_labels)
@@ -37,23 +44,22 @@ for profile_idx in range(0, train_x.shape[1]):
     # Generate the y_pred and y_true for evaluation
     y_true, y_pred = recommender.generate_y(recommendations, train_labels, val_x.getcol(profile_idx), test_x.getcol(profile_idx))
 
-    precisions, recalls, fscore, support = precision_recall_fscore_support(y_true, y_pred)
+    # Get precision and recall
+    precision, recall, fscore, support = precision_recall_fscore_support(y_true, y_pred, average='binary', pos_label=1)
+   
+    # Write the results to a JSON file
+    things1 = np.nonzero(y_pred)[0].astype('str')
+    things2 = np.nonzero(y_true)[0].astype('str')
+    y_pred_string = '[' + ', '.join(things1) + ']'
+    y_true_string = '[' + ', '.join(things2) + ']'
+    f.write('{ "user_index": %s, "precision": %s, "recall": %s, "y_pred": %s, "y_true": %s },' % (str(profile_idx), str(precision), str(recall), y_pred_string, y_true_string))
 
-    # TODO: Write the recommendations, experiment results, profiles etc. to JSON file
+# Delete the last trailing comma
+f.seek(f.tell() - 1, os.SEEK_SET)
+f.write('')
 
-'''
-precision_string = ', '.join([str(prec) for prec in precisions])
-recall_string = ', '.join([str(recall) for recall in recalls])
-
-np.save('autoencoder_cf_sci_y_pred_' + str(embedding_size) + '_' + str(recommendations) + '.npy', y_pred)
-
-# Save the model
-model_name = 'autoencoder_cf_sci_' + str(embedding_size) + '_' + str(recommendations) + '.h5'
-model.save(model_name)
-
-fileName = 'cf-sci-results-' + str(embedding_size) + '_' + str(recommendations) +  '_' + strftime("%Y-%m-%d-%H-%M-%S", gmtime()) + '.txt'
-f = open(fileName,"w+")
-f.write('{"precision": [' + precision_string + '],')
-f.write('"recall": [' + recall_string + ']}')
+# Close the results file
+f.write(']')
 f.close()
-'''
+
+print("-------TEST COMPLETE--------")
