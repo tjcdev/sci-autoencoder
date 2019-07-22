@@ -88,4 +88,10 @@ def load_movies():
         mat = to_categorical(hist, max_item_id)
         test_x[i] = np.sum(mat, axis=0)
 
+    train_users = pd.DataFrame(train_users, index=np.arange(0, len(train_users)))
+    test_users = pd.DataFrame(test_users, index=np.arange(0, len(test_users)))
+
+    train_x = sparse.csr_matrix(train_x, dtype='int64').T
+    test_x = sparse.csr_matrix(test_x, dtype='int64').T
+
     return train_users, train_x, test_users, test_x
