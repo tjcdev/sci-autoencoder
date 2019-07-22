@@ -19,7 +19,7 @@ sys.path.append(dir_path + 'src/models/recommenders')
 
 from content_recommender import ContentRecommender as Recommender
 from cf_data import load_users_projects
-from content_data import load_projects_tfidf
+from content_data import load_projects_tfidf, load_projects_doc2vec
 
 k = int(sys.argv[1])
 autoencoder_model = str(sys.argv[2]) # 'autoencoder_32_cdae_tfidf_desc'
@@ -40,10 +40,11 @@ project_train_labels, project_train_x, project_val_labels, project_val_x, projec
 
 # Generate the embeddings
 embed_model = Model(inputs=autoencoder.input, outputs=autoencoder.get_layer('embedding_layer').output)
-x = vstack([project_train_x, project_val_x, project_test_x])
+x = vstack([project_train_x, project_val_x, project_test_x]).tocsr()
 x_projects = project_train_labels + project_val_labels + project_test_labels
 embedding_size = autoencoder.get_layer('embedding_layer').output_shape[2]
-embeddings = embed_model.predict(x=[x, np.array(x_projects.index, dtype=np.int32).reshape(len(x_projects), 1)])
+other_x = np.array(x_projects.index, dtype=np.int32).reshape(len(x_projects), 1).flatten()
+embeddings = embed_model.predict(x=[x, other_x])
 embeddings = embeddings.reshape(len(x_projects), embedding_size)
 
 train = sparse.load_npz("data/processed/train.npz")
