@@ -13,24 +13,30 @@ import sys
 import os 
 
 from evaluate import evaluate
-from content_recommender import Recommender
-from data_models.cf_data import load_users_projects
-from data_models.content_data import load_projects_tfidf
+dir_path = os.path.dirname(os.path.realpath(__file__))[:-15]
+sys.path.append(dir_path + 'data/data_models')
+sys.path.append(dir_path + 'src/models/recommenders')
 
-k = 5 #int(sys.argv[1])
-autoencoder_model = 'autoencoder_32_cdae_tfidf_desc' # str(sys.argv[2]) # 'autoencoder_32_cdae_tfidf_desc'
-dataSource = 'tfidf_desc' #str(sys.argv[3]) # 'tfidf_desc' 
+from content_recommender import ContentRecommender as Recommender
+from cf_data import load_users_projects
+from content_data import load_projects_tfidf
+
+k = int(sys.argv[1])
+autoencoder_model = str(sys.argv[2]) # 'autoencoder_32_cdae_tfidf_desc'
+dataSource = str(sys.argv[3]) # 'tfidf' 
+field = str(sys.argv[4])
 
 # Load the autoencoder to use
 autoencoder = load_model('data/autoencoders/' + autoencoder_model + '.h5')
 
 # Load the project data
 loadData = None
-if dataSource == 'tfidf_desc':
+if dataSource == 'tfidf':
     loadData = load_projects_tfidf
-if dataSource == 'doc2vec_desc':
+if dataSource == 'doc2vec':
     loadData = load_projects_doc2vec
-project_train_labels, project_train_x, project_val_labels, project_val_x, project_test_labels, project_test_x = loadData()
+
+project_train_labels, project_train_x, project_val_labels, project_val_x, project_test_labels, project_test_x = loadData(field)
 
 # Generate the embeddings
 embed_model = Model(inputs=autoencoder.input, outputs=autoencoder.get_layer('embedding_layer').output)
