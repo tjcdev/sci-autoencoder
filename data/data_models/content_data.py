@@ -16,13 +16,13 @@ from keras.utils.data_utils import get_file
 from keras.utils.np_utils import to_categorical
 from zipfile import ZipFile
 
-def load_projects_tfidf():
+def load_projects_tfidf(field):
     # Load the full project data from the pickle file
     projects = pd.read_pickle("data/processed/project_data")
 
     # Get the TF-IDF for the description fields
     v = TfidfVectorizer()
-    desc_idf = v.fit_transform(projects['description'])
+    desc_idf = v.fit_transform(projects[field])
 
     # Train/Val/Test Split
     test_split_idx = int(np.floor(desc_idf.shape[0] * 0.8))
@@ -42,7 +42,7 @@ def load_projects_tfidf():
 
     return train_labels, train_x, val_labels, val_x, test_labels, test_x
 
-def load_projects_doc2vec():
+def load_projects_doc2vec(field):
     # Load the full project data from the pickle file
     projects = pd.read_pickle("data/processed/project_data")
 
@@ -51,7 +51,7 @@ def load_projects_doc2vec():
     docs = []
     analyzedDocument = namedtuple('AnalyzedDocument', 'words tags')
     for idx, project in projects.iterrows():
-        words = project['description'].lower().split()
+        words = project[field].lower().split()
         tags = [project['project_id']]
         docs.append(analyzedDocument(words, tags))
     
@@ -59,7 +59,7 @@ def load_projects_doc2vec():
 
     desc_idf = []
     for idx, project in projects.iterrows():
-        vector = model.infer_vector(project['description'])
+        vector = model.infer_vector(project[field])
         desc_idf = desc_idf + [vector]
 
     desc_idf = np.array(desc_idf)
