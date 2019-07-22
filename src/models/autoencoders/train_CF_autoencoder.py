@@ -7,7 +7,7 @@ import scipy.sparse as sparse
 
 # Importing all our autoencoder models
 import CDAE
-import DEEP
+import deep_1
 
 # Importing our data models
 dir_path = os.path.dirname(os.path.realpath(__file__))[:-23]
@@ -19,7 +19,7 @@ from cf_data import load_users_projects, load_movies, load_profile_labels
 batch_size = 128 #int(sys.argv[1])
 epochs = 2 #int(sys.argv[2])
 embedding_size = 32 #int(sys.argv[3])
-autoencoder_type = 'deep' #str(sys.argv[4])
+autoencoder_type = 'deep1' #str(sys.argv[4])
 dataSource = 'users_projects' # str(sys.argv[5])
 
 # Load the data
@@ -46,8 +46,8 @@ autoencoder = None
 if autoencoder_type == 'cdae':
     autoencoder = CDAE
 
-if autoencoder_type == 'deep':
-    autoencoder = DEEP
+if autoencoder_type == 'deep1':
+    autoencoder = deep_1
 
 # Create our autoencoder model
 model = autoencoder.create(I=I, U=U, K=embedding_size,

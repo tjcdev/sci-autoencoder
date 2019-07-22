@@ -36,7 +36,7 @@ def create(I, U, K, hidden_activation, output_activation, q=0.5, l=0.01):
         h = Activation(hidden_activation)(h)
         
     encoded = Dense(10, activation='relu')(h)
-    encoded = Dense(hidden_activation, activation='relu')(encoded)
+    encoded = Dense(K, activation='relu')(encoded)
     encoded = Dense(I, activation=output_activation)(encoded)
 
     return Model(input=[x_item, x_user], output=encoded)
