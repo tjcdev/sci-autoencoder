@@ -6,6 +6,7 @@ import json
 
 # Importing all our autoencoder models
 import CDAE
+import DEEP
 
 # Importing our data models
 dir_path = os.path.dirname(os.path.realpath(__file__))[:-23]
@@ -33,6 +34,9 @@ if dataSource == 'doc2vec':
 autoencoder = None
 if autoencoder_type == 'cdae':
     autoencoder = CDAE
+
+if autoencoder_type == 'deep':
+    autoencoder = DEEP
 
 # Create our autoencoder model
 model = autoencoder.create(I=train_x.shape[1], U=train_labels.shape[0] + val_labels.shape[0] + test_labels.shape[0], K=embedding_size,
