@@ -21,15 +21,6 @@ dataSource = str(sys.argv[5])
 
 # Load the data
 loadData = None
-if dataSource == 'tfidf_desc':
-    train_labels, train_x, val_labels, val_x, test_labels, test_x = load_projects_tfidf()
-    
-    U = train_labels.shape[0] + val_labels.shape[0] + test_labels.shape[0]
-    I = train_x.shape[0]
-    labels = train_labels
-
-if dataSource == 'doc2vec_desc':
-    train_labels, train_x, val_labels, val_x, test_labels, test_x = load_projects_doc2vec()
 
 if dataSource == 'users_projects':
     train_labels, train_x, val_labels, val_x, test_labels, test_x = load_users_projects()
@@ -53,8 +44,8 @@ model.summary()
 
 # Train our autoencoder
 
-    train_x = train_x.T
-    val_x = val_x.T
+train_x = train_x.T
+val_x = val_x.T
 history = model.fit(x=[train_x, labels.index], y=train_x,
                     batch_size=batch_size, nb_epoch=epochs, verbose=1,
                     validation_data=[[val_x, labels.index], val_x])
