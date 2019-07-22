@@ -3,6 +3,7 @@ import numpy as np
 import os
 import sys
 import json
+import scipy.sparse as sparse
 
 # Importing all our autoencoder models
 import CDAE
@@ -29,9 +30,16 @@ if dataSource == 'users_projects':
     U = train_x.shape[1]
     I = train_x.shape[0]
     labels = load_profile_labels()
+    labels_index = labels.index
 
 if dataSource == 'movies':
-    loadData = load_movies
+    train_labels, train_x, test_labels, test_x = load_movies()
+        
+    val_x = test_x
+
+    U = train_x.shape[1]
+    I = train_x.shape[0]
+    labels_index = train_labels.index
 
 autoencoder = None
 if autoencoder_type == 'cdae':
@@ -44,12 +52,12 @@ model.compile(loss='mean_absolute_error', optimizer='adam')
 model.summary()
 
 # Train our autoencoder
-
 train_x = train_x.T
 val_x = val_x.T
-history = model.fit(x=[train_x, labels.index], y=train_x,
+
+history = model.fit(x=[train_x, labels_index], y=train_x,
                     batch_size=batch_size, nb_epoch=epochs, verbose=1,
-                    validation_data=[[val_x, labels.index], val_x])
+                    validation_data=[[val_x, labels_index], val_x])
 
 # Save history and model
 name = "train_autoencoder_%s_%s_%s" % (str(embedding_size), autoencoder_type, dataSource)
