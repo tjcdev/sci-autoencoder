@@ -13,11 +13,11 @@ dir_path = os.path.dirname(os.path.realpath(__file__))[:-15]
 sys.path.append(dir_path + 'data')
 sys.path.append(dir_path + 'src/models')
 from recommenders.cf_recommender import CFRecommender
-from data_models.cf_data import load_users_projects
+from data_models.cf_data import load_users_projects, load_movies
 
 k = int(sys.argv[1])
 autoencoder_model = str(sys.argv[2]) # 'train_autoencoder_32_cdae_users_projects'
-dataSource = str(sys.argv[3]) # 'tfidf_desc' 
+dataSource = str(sys.argv[3]) # 'movies' 
 
 # Load the autoencoder to use
 model = load_model('data/autoencoders/' + autoencoder_model + '.h5')
@@ -25,6 +25,11 @@ model = load_model('data/autoencoders/' + autoencoder_model + '.h5')
 # Load out time consistent collaborative filtering data
 if dataSource == 'users_projects':
     train_labels, train_x, val_labels, val_x, test_labels, test_x = load_users_projects()
+
+if dataSource == 'movies':
+    train_labels, train_x, test_labels, test_x = load_movies()
+    val_x = None
+    val_labels = None
 
 recommender = CFRecommender(k)
 
@@ -45,7 +50,10 @@ for profile_idx in range(0, train_x.shape[1]):
     recommendations = recommender.top_projects(profile_col, predictions, train_labels)
 
     # Generate the y_pred and y_true for evaluation
-    y_true, y_pred = recommender.generate_y(recommendations, train_labels, val_x.getcol(profile_idx), test_x.getcol(profile_idx))
+    if val_x != None:
+        y_true, y_pred = recommender.generate_y(recommendations, train_labels, test_x.getcol(profile_idx), val_x=val_x.getcol(profile_idx))
+    else:
+        y_true, y_pred = recommender.generate_y(recommendations, train_labels, test_x.getcol(profile_idx))
 
     # Get precision and recall
     precision, recall, fscore, support = precision_recall_fscore_support(y_true, y_pred, average='binary', pos_label=1)
