@@ -14,15 +14,16 @@ sys.path.append('/Users/thomascartwright/Documents/Development/sci-autoencoder/d
 from recommenders.cf_recommender import CFRecommender
 from data_models.cf_data import load_users_projects
 
-k = 5 #int(sys.argv[1])
-autoencoder_model = 'autoencoder_32_cdae_users_projects' # str(sys.argv[2]) # 'autoencoder_32_cdae_tfidf_desc'
-dataSource = 'tfidf_desc' #str(sys.argv[3]) # 'tfidf_desc' 
+k = int(sys.argv[1])
+autoencoder_model = str(sys.argv[2]) # 'train_autoencoder_32_cdae_users_projects'
+dataSource = str(sys.argv[3]) # 'tfidf_desc' 
 
 # Load the autoencoder to use
 model = load_model('data/autoencoders/' + autoencoder_model + '.h5')
 
 # Load out time consistent collaborative filtering data
-train_labels, train_x, val_labels, val_x, test_labels, test_x = load_users_projects()
+if dataSource == 'users_projects':
+    train_labels, train_x, val_labels, val_x, test_labels, test_x = load_users_projects()
 
 recommender = CFRecommender(k)
 
