@@ -4,6 +4,8 @@ import os
 import sys
 import json
 import scipy.sparse as sparse
+import pandas as pd
+
 
 # Importing all our autoencoder models
 import CDAE
@@ -40,6 +42,10 @@ if dataSource == 'movies':
 
     U = train_x.shape[1]
     I = train_x.shape[0]
+
+    # Create a place holder labels dataframe
+    train_labels = pd.DataFrame(np.arange(0, train_x.shape[1]), index=np.arange(0, train_x.shape[1]))
+
     labels_index = train_labels.index
 
 autoencoder = None
