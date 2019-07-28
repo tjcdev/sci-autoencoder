@@ -10,6 +10,7 @@ import pandas as pd
 # Importing all our autoencoder models
 import CDAE
 import deep_1
+import deep_2
 
 # Importing our data models
 dir_path = os.path.dirname(os.path.realpath(__file__))[:-23]
@@ -18,11 +19,11 @@ from content_data import load_projects_doc2vec, load_projects_tfidf
 from cf_data import load_users_projects, load_movies, load_profile_labels
 
 # Input Parameters for training our autoencoder
-batch_size = int(sys.argv[1])
-epochs = int(sys.argv[2])
-embedding_size = int(sys.argv[3])
-autoencoder_type = str(sys.argv[4])
-dataSource = str(sys.argv[5])
+batch_size = 128 # int(sys.argv[1])
+epochs = 2 #int(sys.argv[2])
+embedding_size = 128 # int(sys.argv[3])
+autoencoder_type = 'deep2' #str(sys.argv[4])
+dataSource = 'users_projects' #str(sys.argv[5])
 
 # Load the data
 loadData = None
@@ -54,6 +55,9 @@ if autoencoder_type == 'cdae':
 
 if autoencoder_type == 'deep1':
     autoencoder = deep_1
+
+if autoencoder_type == 'deep2':
+    autoencoder = deep_2
 
 # Create our autoencoder model
 model = autoencoder.create(I=I, U=U, K=embedding_size,
