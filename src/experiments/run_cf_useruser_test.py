@@ -11,12 +11,12 @@ import os
 import sys
 
 # Load the user project_matrix
-data = pd.read_pickle('data/active_profile_projects')
+data = pd.read_pickle('data/processed/active_profile_projects')
 data_items = data.drop(columns=['profile'])
 
 # Load the project_data and profile_projects
-projects = pd.read_pickle('data/project_data')
-profile_projects = pd.read_pickle('data/profile_projects_time_consistent')
+projects = pd.read_pickle('data/processed/project_data')
+profile_projects = pd.read_pickle('data/processed/profile_projects_time_consistent')
 
 def get_user_projects(user_id):
     known_user_likes = data_items.loc[user_id]
@@ -129,9 +129,10 @@ recall_string = ', '.join([str(recall) for recall in recalls])
 refined_precision_string = ', '.join([str(ref_prec) for ref_prec in refined_precisions])
 
 y_preds = np.array(y_preds)
-np.save('cfuseruser-sci-results-' + str(k) + '.npy', y_preds)
+np.save('data/raw-experiment-results/cfuseruser-sci-results-' + str(k) + '.npy', y_preds)
 
-fileName = 'cfuseruser-sci-results-' + str(k) + '_' + strftime("%Y-%m-%d-%H-%M-%S", gmtime()) + '.txt'
+fileName = 'data/raw-experiment-results/cfuseruser-sci-results-' + str(k) + '.json'
+
 f = open(fileName,"w+")
 f.write('{"precision": [' + precision_string + '],')
 f.write('"recall": [' + recall_string + '],')

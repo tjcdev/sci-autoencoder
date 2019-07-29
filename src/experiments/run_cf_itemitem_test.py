@@ -8,12 +8,9 @@ from time import gmtime, strftime
 
 import os
 import sys
-module_path = os.path.abspath(os.path.join('../'))
-if module_path not in sys.path:
-    sys.path.append(module_path)
 
 # Load the user project_matrix
-data = pd.read_pickle('data/active_profile_projects')
+data = pd.read_pickle('data/processed/active_profile_projects')
 data.head()
 
 # Drop the profile column so it's basically just an adjacency matrix
@@ -21,8 +18,8 @@ data_items = data.drop(columns=['profile'])
 data_items.head()
 
 # Load the project_data and profile_projects
-projects = pd.read_pickle('data/project_data')
-profile_projects = pd.read_pickle('data/profile_projects_time_consistent')
+projects = pd.read_pickle('data/processed/project_data')
+profile_projects = pd.read_pickle('data/processed/profile_projects_time_consistent')
 
 k_size = int(sys.argv[1])
 
@@ -44,7 +41,7 @@ refined_precisions = []
 data_matrix = calculate_similarity(data_items)
 
 # Open file to write to
-fileName = 'cf-item-' + str(k_size) + '__' + strftime("%Y-%m-%d-%H-%M-%S", gmtime()) + '.txt'
+fileName = 'data/raw-experiment-results/cf-item-' + str(k_size) + '.txt'
 f = open(fileName,"w+")
 f.write(' {k: %s, results: [' % str(k_size))
 
