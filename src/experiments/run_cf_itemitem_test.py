@@ -46,7 +46,7 @@ f = open(fileName,"w+")
 f.write(' {k: %s, results: [' % str(k_size))
 
 # Loop over all the users
-for user_index in range(0, 10): #len(data['profile'])):
+for user_index in range(0, len(data['profile'])):
     user_id = data.loc[user_index]['profile']
 
     # User projects
