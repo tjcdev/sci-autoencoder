@@ -10,11 +10,11 @@ def create(I, U, K, hidden_activation, output_activation, q=0.5, l=0.01):
     # Do nothing with x_item
     x_item = Input((I,), name='x_item')
     h_item = Dropout(q)(x_item)
-    h_item = Dense(K, W_regularizer=l2(l), b_regularizer=l2(l))(h_item)
+    h_item = Dense(500, W_regularizer=l2(l), b_regularizer=l2(l))(h_item)
 
     # Pass in the vector representing the users 
     x_user = Input((1,), name='x_user')
-    h_user = Embedding(input_dim=U, output_dim=K, input_length=1, W_regularizer=l2(l), name='embedding_layer')(x_user)
+    h_user = Embedding(input_dim=U, output_dim=500, input_length=1, W_regularizer=l2(l), name='embedding_layer')(x_user)
     h_user = Flatten()(h_user)
     
     # I replaced this function as per
