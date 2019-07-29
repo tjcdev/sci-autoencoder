@@ -3,8 +3,8 @@ from keras.models import Model
 from keras.regularizers import l2
 
 '''
-    This structure came from:
-    Deep Autoencoders for Collaborative Filtering (Medium article)
+This structure came from:
+Training Deep Autoencoders for Collaborative Filtering
 '''
 def create(I, U, K, hidden_activation, output_activation, q=0.5, l=0.01):
     # Do nothing with x_item
@@ -24,10 +24,18 @@ def create(I, U, K, hidden_activation, output_activation, q=0.5, l=0.01):
         h = Activation(hidden_activation)(h)
 
     # "encoded" is the encoded representation of the input
-    encoded = Dense(K, activation='relu')(h)   
-    # Middle Layer
-    middle = Dense(K, activation='relu')(encoded)
+    encoded_1 = Dense(512, activation='relu')(h)
+    encoded_1 = Dropout(0.8)(encoded_1)
+    encoded_2 = Dense(512, activation='relu')(encoded_1)
+    encoded_2 = Dropout(0.8)(encoded_2) 
+    encoded_3 = Dense(1024, activation='relu')(encoded_2)
+    encoded_3 = Dropout(0.8)(encoded_3) 
+
     # "decoded" is the lossy reconstruction of the input
-    decoded = Dense(I, activation=output_activation)(middle)
+    decoded_1 = Dense(512, activation='relu')(encoded_3)
+    decoded_2 = Dense(512, activation='relu')(decoded_1)
+    decoded_3 = Dense(1024, activation='relu')(decoded_2)
+
+    decoded = Dense(I, activation=output_activation)(decoded_3)
 
     return Model(input=[x_item, x_user], output=decoded)

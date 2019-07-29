@@ -11,19 +11,21 @@ import pandas as pd
 import CDAE
 import deep_1
 import deep_2
+import deep_3
+import deep_4
 
 # Importing our data models
 dir_path = os.path.dirname(os.path.realpath(__file__))[:-23]
 sys.path.append(dir_path + 'data/data_models')
 from content_data import load_projects_doc2vec, load_projects_tfidf 
-from cf_data import load_users_projects, load_movies, load_profile_labels
+from cf_data import load_users_projects, load_new_users_projects, load_movies, load_profile_labels, load_new_profile_labels
 
 # Input Parameters for training our autoencoder
 batch_size = 128 # int(sys.argv[1])
-epochs = 2 #int(sys.argv[2])
+epochs = 100 #int(sys.argv[2])
 embedding_size = 128 # int(sys.argv[3])
-autoencoder_type = 'deep2' #str(sys.argv[4])
-dataSource = 'users_projects' #str(sys.argv[5])
+autoencoder_type = 'cdae' #str(sys.argv[4])
+dataSource = 'new_users_projects' #str(sys.argv[5])
 
 # Load the data
 loadData = None
@@ -34,6 +36,14 @@ if dataSource == 'users_projects':
     U = train_x.shape[1]
     I = train_x.shape[0]
     labels = load_profile_labels()
+    labels_index = labels.index
+
+if dataSource == 'new_users_projects':
+    train_labels, train_x, val_labels, val_x, test_labels, test_x = load_new_users_projects()
+    
+    U = train_x.shape[1]
+    I = train_x.shape[0]
+    labels = load_new_profile_labels()
     labels_index = labels.index
 
 if dataSource == 'movies':
@@ -58,6 +68,12 @@ if autoencoder_type == 'deep1':
 
 if autoencoder_type == 'deep2':
     autoencoder = deep_2
+
+if autoencoder_type == 'deep3':
+    autoencoder = deep_3
+
+if autoencoder_type == 'deep4':
+    autoencoder = deep_4
 
 # Create our autoencoder model
 model = autoencoder.create(I=I, U=U, K=embedding_size,
