@@ -13,11 +13,11 @@ dir_path = os.path.dirname(os.path.realpath(__file__))[:-15]
 sys.path.append(dir_path + 'data')
 sys.path.append(dir_path + 'src/models')
 from recommenders.cf_recommender import CFRecommender
-from data_models.cf_data import load_users_projects, load_movies
+from data_models.cf_data import load_users_projects, load_new_users_projects, load_movies
 
-k = int(sys.argv[1])
-autoencoder_model = str(sys.argv[2]) # 'train_autoencoder_32_cdae_users_projects'
-dataSource = str(sys.argv[3]) # 'movies' 
+k = 5 #int(sys.argv[1])
+autoencoder_model = 'train_autoencoder_128_cdae_new_users_projects' # str(sys.argv[2]) # 'train_autoencoder_32_cdae_users_projects'
+dataSource = 'new_users_projects' #str(sys.argv[3]) # 'movies' 
 
 # Load the autoencoder to use
 model = load_model('data/autoencoders/' + autoencoder_model + '.h5')
@@ -25,6 +25,9 @@ model = load_model('data/autoencoders/' + autoencoder_model + '.h5')
 # Load out time consistent collaborative filtering data
 if dataSource == 'users_projects':
     train_labels, train_x, val_labels, val_x, test_labels, test_x = load_users_projects()
+
+if dataSource == 'new_users_projects':
+    train_labels, train_x, val_labels, val_x, test_labels, test_x = load_new_users_projects()
 
 if dataSource == 'movies':
     train_labels, train_x, test_labels, test_x = load_movies()
