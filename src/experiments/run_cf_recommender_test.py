@@ -16,9 +16,9 @@ sys.path.append(dir_path + 'src/models')
 from recommenders.cf_recommender import CFRecommender
 from data_models.cf_data import load_users_projects, load_new_users_projects, load_movies
 
-k = 5 #int(sys.argv[1])
-autoencoder_model = 'train_autoencoder_32_cdae_users_projects' # str(sys.argv[2]) # 'train_autoencoder_32_cdae_users_projects'
-dataSource = 'users_projects' # str(sys.argv[3]) # 'movies' 
+k = int(sys.argv[1])
+autoencoder_model = str(sys.argv[2]) # 'train_autoencoder_32_cdae_users_projects'
+dataSource = str(sys.argv[3]) # 'movies' 
 
 # Load the autoencoder to use
 model = load_model('data/autoencoders/' + autoencoder_model + '.h5')
@@ -63,6 +63,11 @@ for profile_idx in range(0, train_x.shape[1]):
     precision, recall, fscore, support = precision_recall_fscore_support(y_true, y_pred, average='binary', pos_label=1)
     avg_precision = average_precision_score(y_true, predictions.reshape(y_true.shape), average='weighted', pos_label=1)
     rmse = sqrt(mean_squared_error(y_true, predictions.reshape(y_true.shape)))
+
+    if math.isnan(avg_precision):
+        avg_precision = 0
+    if math.isnan(rmse):
+        rmse = 0
 
     # Write the results to a JSON file
     things1 = np.nonzero(y_pred)[0].astype('str')
