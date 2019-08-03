@@ -24,9 +24,11 @@ def create(I, U, K, hidden_activation, output_activation, q=0.5, l=0.01):
         h = Activation(hidden_activation)(h)
 
     # "encoded" is the encoded representation of the input
-    encoded = Dense(128, activation='relu')(h)   
+    encoded = Dense(128, activation='relu')(h) 
+    encoded = Dropout(q)(encoded)  
     # Middle Layer
     middle = Dense(128, activation='relu')(encoded)
+    middle = Dropout(q)(middle)
     # "decoded" is the lossy reconstruction of the input
     decoded = Dense(I, activation=output_activation)(middle)
 
