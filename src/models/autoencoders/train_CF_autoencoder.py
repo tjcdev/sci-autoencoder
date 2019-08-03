@@ -21,12 +21,12 @@ from content_data import load_projects_doc2vec, load_projects_tfidf
 from cf_data import load_users_projects, load_new_users_projects, load_movies, load_profile_labels, load_new_profile_labels
 
 # Input Parameters for training our autoencoder
-batch_size = 32 # int(sys.argv[1])
-epochs = 100 # int(sys.argv[2])
-embedding_size = 32 # int(sys.argv[3])
-autoencoder_type = 'cdae' #str(sys.argv[4])
-dataSource = 'new_users_projects' # str(sys.argv[5])
-q = 0.8 #float(sys.argv[6])
+batch_size = int(sys.argv[1])
+epochs = int(sys.argv[2])
+embedding_size = int(sys.argv[3])
+autoencoder_type = str(sys.argv[4])
+dataSource = str(sys.argv[5])
+q = float(sys.argv[6])
 
 # Load the data
 loadData = None
