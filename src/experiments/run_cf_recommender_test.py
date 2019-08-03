@@ -16,9 +16,9 @@ sys.path.append(dir_path + 'src/models')
 from recommenders.cf_recommender import CFRecommender
 from data_models.cf_data import load_users_projects, load_new_users_projects, load_movies
 
-k = int(sys.argv[1])
-autoencoder_model = str(sys.argv[2]) # 'train_autoencoder_32_cdae_users_projects'
-dataSource = str(sys.argv[3]) # 'movies' 
+k = 5 # int(sys.argv[1])
+autoencoder_model = 'train_autoencoder_32_cdae_new_users_projects_0.8' # str(sys.argv[2]) # 'train_autoencoder_32_cdae_users_projects'
+dataSource = 'new_users_projects' # str(sys.argv[3]) # 'movies' 
 
 # Load the autoencoder to use
 model = load_model('data/autoencoders/' + autoencoder_model + '.h5')
@@ -74,7 +74,7 @@ for profile_idx in range(0, train_x.shape[1]):
     things2 = np.nonzero(y_true)[0].astype('str')
     y_pred_string = '[' + ', '.join(things1) + ']'
     y_true_string = '[' + ', '.join(things2) + ']'
-    f.write('{ "user_index": %s, "precision": %s, "recall": %s, "y_pred": %s, "y_true": %s, "avg_precision": %d, "rmse": %d },' % (str(profile_idx), str(precision), str(recall), y_pred_string, y_true_string, avg_precision, rmse))
+    f.write('{ "user_index": %s, "precision": %s, "recall": %s, "y_pred": %s, "y_true": %s, "avg_precision": %s, "rmse": %s },' % (str(profile_idx), str(precision), str(recall), y_pred_string, y_true_string, str(avg_precision), str(rmse)))
 
 # Delete the last trailing comma
 f.seek(f.tell() - 1, os.SEEK_SET)

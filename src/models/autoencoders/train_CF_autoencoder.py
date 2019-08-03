@@ -21,12 +21,12 @@ from content_data import load_projects_doc2vec, load_projects_tfidf
 from cf_data import load_users_projects, load_new_users_projects, load_movies, load_profile_labels, load_new_profile_labels
 
 # Input Parameters for training our autoencoder
-batch_size = int(sys.argv[1])
-epochs = int(sys.argv[2])
-embedding_size = int(sys.argv[3])
-autoencoder_type = str(sys.argv[4])
-dataSource = str(sys.argv[5])
-q = float(sys.argv[6])
+batch_size = 32 # int(sys.argv[1])
+epochs = 100 # int(sys.argv[2])
+embedding_size = 32 # int(sys.argv[3])
+autoencoder_type = 'cdae' #str(sys.argv[4])
+dataSource = 'new_users_projects' # str(sys.argv[5])
+q = 0.8 #float(sys.argv[6])
 
 # Load the data
 loadData = None
@@ -78,17 +78,21 @@ if autoencoder_type == 'deep4':
 
 # Create our autoencoder model
 model = autoencoder.create(I=I, U=U, K=embedding_size,
-                    hidden_activation='relu', output_activation='sigmoid', q=q, l=0.01)
+                    hidden_activation='relu', output_activation='sigmoid', q=q, l=0.001)
 model.compile(loss='mean_absolute_error', optimizer='adam')
 model.summary()
 
 # Train our autoencoder
 train_x = train_x.T
 val_x = val_x.T
+test_x = test_x.T
+
+train_val_x = train_x + val_x
+train_test_x = train_x + test_x
 
 history = model.fit(x=[train_x, labels_index], y=train_x,
                     batch_size=batch_size, nb_epoch=epochs, verbose=1,
-                    validation_data=[[val_x, labels_index], val_x])
+                    validation_data=[[train_x, labels_index], train_val_x])
 
 # Save history and model
 name = "train_autoencoder_%s_%s_%s_%s" % (str(embedding_size), autoencoder_type, dataSource, str(q))
