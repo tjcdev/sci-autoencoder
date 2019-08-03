@@ -26,6 +26,7 @@ epochs = int(sys.argv[2])
 embedding_size = int(sys.argv[3])
 autoencoder_type = str(sys.argv[4])
 dataSource = str(sys.argv[5])
+q = float(sys.argv[6])
 
 # Load the data
 loadData = None
@@ -77,7 +78,7 @@ if autoencoder_type == 'deep4':
 
 # Create our autoencoder model
 model = autoencoder.create(I=I, U=U, K=embedding_size,
-                    hidden_activation='relu', output_activation='sigmoid', q=0.50, l=0.01)
+                    hidden_activation='relu', output_activation='sigmoid', q=q, l=0.01)
 model.compile(loss='mean_absolute_error', optimizer='adam')
 model.summary()
 
@@ -90,7 +91,7 @@ history = model.fit(x=[train_x, labels_index], y=train_x,
                     validation_data=[[val_x, labels_index], val_x])
 
 # Save history and model
-name = "train_autoencoder_%s_%s_%s" % (str(embedding_size), autoencoder_type, dataSource)
+name = "train_autoencoder_%s_%s_%s_%s" % (str(embedding_size), autoencoder_type, dataSource, str(q))
 
 with open('data/raw-experiment-results/' + name + '.json', 'w') as f:
     json.dump(history.history, f)
