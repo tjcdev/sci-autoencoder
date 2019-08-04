@@ -26,16 +26,18 @@ from content_data import load_projects_doc2vec, load_projects_tfidf
 from cf_data import load_users_projects, load_new_users_projects, load_movies, load_profile_labels, load_new_profile_labels
 from recommenders.cf_recommender import CFRecommender
 from recommenders.content_recommender import ContentRecommender
-from autoencoders import hyb1, hyb2
+from autoencoders import hyb2, hyb3
+
+# 32 100 0 hyb3 new_users_projects 0.8 description
 
 # Input Parameters for training our autoencoder
-batch_size = 32 # int(sys.argv[1]) # 32
-epochs = 10 # int(sys.argv[2]) # 100
-embedding_size = 32 # int(sys.argv[3]) # 32
-autoencoder_type = 'hyb2' # str(sys.argv[4]) # 'hyb1'
-dataSource = 'new_users_projects' # str(sys.argv[5]) # 'new_users_projects'
-q = 0.8 # float(sys.argv[6]) # 0.8
-field = 'description' # str(sys.argv[7]) # 'description'
+batch_size = int(sys.argv[1]) # 32
+epochs = int(sys.argv[2]) # 100
+embedding_size = int(sys.argv[3]) # 32
+autoencoder_type = str(sys.argv[4]) # 'hyb1'
+dataSource = str(sys.argv[5]) # 'new_users_projects'
+q = float(sys.argv[6]) # 0.8
+field = str(sys.argv[7]) # 'description'
 
 # Load out time consistent collaborative filtering data
 train_labels, train_x, val_labels, val_x, test_labels, test_x = load_new_users_projects()
@@ -51,11 +53,11 @@ x_projects = project_train_labels + project_val_labels + project_test_labels
 
 
 autoencoder = None
-if autoencoder_type == 'hyb1':
-    autoencoder = hyb1
-
 if autoencoder_type == 'hyb2':
     autoencoder = hyb2
+
+if autoencoder_type == 'hyb3':
+    autoencoder = hyb3
 
 # Create a TF_IDF matrix for all users
 users_tf_idf = None
@@ -83,7 +85,7 @@ users = np.arange(0, train_x_t.shape[0])
 
 # Train the autoencoder
 history = model.fit(x=[train_x_t, users_tf_idf, users], y=train_x_t,
-                    batch_size=32, nb_epoch=10, verbose=1,
+                    batch_size=batch_size, nb_epoch=epochs, verbose=1,
                     validation_data=[[train_x_t, users_tf_idf, users], train_val_x])
 
 # Save history and model
