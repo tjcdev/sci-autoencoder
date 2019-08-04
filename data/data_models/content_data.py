@@ -42,6 +42,32 @@ def load_projects_tfidf(field):
 
     return train_labels, train_x, val_labels, val_x, test_labels, test_x
 
+def load_cf_projects_tfidf(field):
+    # Load the full project data from the pickle file
+    content_projects = pd.read_pickle("data/processed/cf_projects_data")
+
+    # Get the TF-IDF for the description fields
+    v = TfidfVectorizer()
+    desc_idf = v.fit_transform(content_projects[field])
+
+    # Train/Val/Test Split
+    content_test_split_idx = int(np.floor(desc_idf.shape[0] * 0.8))
+    content_val_split_idx = int(content_test_split_idx * 0.9)
+
+    content_train_x = desc_idf[:content_val_split_idx]
+    content_val_x = desc_idf[content_val_split_idx:content_test_split_idx]
+    content_test_x = desc_idf[content_test_split_idx:]
+
+    content_train_labels_idx = np.arange(0, content_val_split_idx)
+    content_val_labels_idx = np.arange(content_val_split_idx, content_test_split_idx)
+    content_test_labels_idx = np.arange(content_test_split_idx, desc_idf.shape[0])
+
+    content_train_labels = pd.DataFrame(content_projects['project_id'].iloc[:content_val_split_idx], index=content_train_labels_idx)
+    content_val_labels = pd.DataFrame(content_projects['project_id'].iloc[content_val_split_idx:content_test_split_idx], index=content_val_labels_idx)
+    content_test_labels = pd.DataFrame(content_projects['project_id'].iloc[content_test_split_idx:], index=content_test_labels_idx)
+
+    return content_train_labels, content_train_x, content_val_labels, content_val_x, content_test_labels, content_test_x
+
 def load_projects_doc2vec(field):
     # Load the full project data from the pickle file
     projects = pd.read_pickle("data/processed/project_data")
