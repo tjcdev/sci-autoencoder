@@ -3,7 +3,8 @@ import sys
 from time import gmtime, strftime
 
 from keras.models import load_model
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import precision_recall_fscore_support, mean_squared_error, average_precision_score
+from math import sqrt
 import numpy as np
 import pandas as pd
 import math
@@ -60,13 +61,20 @@ for profile_idx in range(0, train_x.shape[1]):
 
     # Get precision and recall
     precision, recall, fscore, support = precision_recall_fscore_support(y_true, y_pred, average='binary', pos_label=1)
-   
+    avg_precision = average_precision_score(y_true, predictions.reshape(y_true.shape), average='weighted', pos_label=1)
+    rmse = sqrt(mean_squared_error(y_true, predictions.reshape(y_true.shape)))
+
+    if math.isnan(avg_precision):
+        avg_precision = 0
+    if math.isnan(rmse):
+        rmse = 0
+
     # Write the results to a JSON file
     things1 = np.nonzero(y_pred)[0].astype('str')
     things2 = np.nonzero(y_true)[0].astype('str')
     y_pred_string = '[' + ', '.join(things1) + ']'
     y_true_string = '[' + ', '.join(things2) + ']'
-    f.write('{ "user_index": %s, "precision": %s, "recall": %s, "y_pred": %s, "y_true": %s },' % (str(profile_idx), str(precision), str(recall), y_pred_string, y_true_string))
+    f.write('{ "user_index": %s, "precision": %s, "recall": %s, "y_pred": %s, "y_true": %s, "avg_precision": %s, "rmse": %s },' % (str(profile_idx), str(precision), str(recall), y_pred_string, y_true_string, str(avg_precision), str(rmse)))
 
 # Delete the last trailing comma
 f.seek(f.tell() - 1, os.SEEK_SET)

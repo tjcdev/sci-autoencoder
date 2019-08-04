@@ -25,7 +25,9 @@ def create(I, U, K, hidden_activation, output_activation, q=0.5, l=0.01):
 
     # "decoded" is the lossy reconstruction of the input
     encode = Dense(500, activation='sigmoid')(h)
+    encode = Dropout(q)(encode)
     middle = Dense(250, activation='sigmoid')(encode)
+    middle = Dropout(q)(middle)
     decode = Dense(500, activation='sigmoid')(middle)
 
     output = Dense(I, activation=output_activation)(decode)
