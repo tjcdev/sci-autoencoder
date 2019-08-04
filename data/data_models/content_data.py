@@ -21,7 +21,7 @@ def load_projects_tfidf(field):
     projects = pd.read_pickle("data/processed/project_data")
 
     # Get the TF-IDF for the description fields
-    v = TfidfVectorizer()
+    v = TfidfVectorizer(max_features=3000)
     desc_idf = v.fit_transform(projects[field])
 
     # Train/Val/Test Split
@@ -47,7 +47,7 @@ def load_cf_projects_tfidf(field):
     content_projects = pd.read_pickle("data/processed/cf_projects_data")
 
     # Get the TF-IDF for the description fields
-    v = TfidfVectorizer()
+    v = TfidfVectorizer(max_features=3000)
     desc_idf = v.fit_transform(content_projects[field])
 
     # Train/Val/Test Split
