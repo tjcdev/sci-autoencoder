@@ -32,7 +32,7 @@ def create(I, U, K, hidden_activation, output_activation, q=0.5, l=0.01):
 
     # I replaced this function as per
     # https://keras.io/layers/merge/#add
-    h = Add()([h_item, h_content])
+    h = Add()([h_item, h_user, h_content])
     if hidden_activation:
         h = Activation(hidden_activation)(h)
     
