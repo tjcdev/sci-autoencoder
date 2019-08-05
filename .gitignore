@@ -1,3 +1,5 @@
+data/autoencoders/train_autoencoder_1024_hyb3_new_users_projects_0.8.h5
+data/experiment-results/autoencoders/train_autoencoder_1024_hyb3_new_users_projects_0.8.json
 data/raw/*
 notebooks/data-processing/test_cf.pkl
 notebooks/data-processing/train_cf.pkl
