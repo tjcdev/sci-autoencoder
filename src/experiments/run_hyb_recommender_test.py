@@ -21,7 +21,7 @@ sys.path.append(dir_path + 'src/models')
 from recommenders.cf_recommender import CFRecommender
 from data_models.cf_data import load_users_projects, load_new_users_projects, load_movies
 from data_models.content_data import load_projects_tfidf
-from autoencoders import hyb1, hyb2
+from autoencoders import hyb2, hyb3
 from recommenders.content_recommender import ContentRecommender
 
 k = 5 # int(sys.argv[1])
