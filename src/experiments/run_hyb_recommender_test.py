@@ -24,10 +24,10 @@ from data_models.content_data import load_projects_tfidf
 from autoencoders import hyb2, hyb3
 from recommenders.content_recommender import ContentRecommender
 
-k = int(sys.argv[1])
-autoencoder_model = str(sys.argv[2]) # 'train_autoencoder_32_cdae_users_projects'
-dataSource = str(sys.argv[3]) # 'movies' 
-field = str(sys.argv[4])
+k = 10 # int(sys.argv[1])
+autoencoder_model = 'hyb3-sim' #str(sys.argv[2]) # 'train_autoencoder_32_cdae_users_projects'
+dataSource = 'new_users_projects' # str(sys.argv[3]) # 'movies' 
+field = 'description' #str(sys.argv[4])
 
 # Load the CF data
 if dataSource == 'new_users_projects':
@@ -39,12 +39,14 @@ x = vstack([project_train_x, project_val_x, project_test_x]).tocsr()
 x_projects = project_train_labels + project_val_labels + project_test_labels
 
 # Construct users TF-IDF
-users_tf_idf = None
+users_tf_idf = np.load('data/processed/user-project-similarity.npy')
+'''
 for user_index in range(0, train_x.shape[1]):
     user_project_idx = np.nonzero(train_x[:, user_index])[0]
     user_tf_idf = np.squeeze(np.asarray(x[user_project_idx].sum(axis=0)))
     users_tf_idf = vstack([users_tf_idf, user_tf_idf])
 users_tf_idf = sparse.csr_matrix(users_tf_idf)
+'''
 
 # Load the autoencoder to use
 model = load_model('data/autoencoders/' + autoencoder_model + '.h5')
@@ -61,7 +63,7 @@ recommender = CFRecommender(k)
 for profile_idx in range(0, train_x.shape[1]):
     profile_col = np.squeeze(np.asarray(train_x.getcol(profile_idx).todense())).reshape(1,-1)
     labels = np.asarray(train_labels.index)
-    this_users_tf_idf = np.squeeze(np.asarray(users_tf_idf.getrow(profile_idx).todense())).reshape(1,-1)
+    this_users_tf_idf = users_tf_idf[profile_idx].reshape(1,-1)
 
     # Make a prediction for 
     predictions = model.predict([profile_col, this_users_tf_idf, labels])

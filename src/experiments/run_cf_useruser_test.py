@@ -35,7 +35,7 @@ def find_k_similar_users(data_items, user_id, metric='cosine', k=50):
     similarities = 1 - distances.flatten()
     return pd.Series(similarities, indices[0])
 
-k = int(sys.argv[1])
+k = 5 #int(sys.argv[1])
 
 precisions = []
 recalls = []

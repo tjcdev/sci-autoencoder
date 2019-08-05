@@ -21,7 +21,7 @@ data_items.head()
 projects = pd.read_pickle('data/processed/project_data')
 profile_projects = pd.read_pickle('data/processed/profile_projects_time_consistent')
 
-k_size = int(sys.argv[1])
+k_size = 5 # int(sys.argv[1])
 
 def calculate_similarity(data_items):
     data_sparse = sparse.csr_matrix(data_items)
@@ -43,7 +43,7 @@ data_matrix = calculate_similarity(data_items)
 # Open file to write to
 fileName = 'data/raw-experiment-results/cf-item-' + str(k_size) + '.txt'
 f = open(fileName,"w+")
-f.write(' {k: %s, results: [' % str(k_size))
+f.write('[')
 
 # Loop over all the users
 for user_index in range(0, len(data['profile'])):
@@ -129,10 +129,18 @@ for user_index in range(0, len(data['profile'])):
         precisions = precisions + [precision]
         recalls = recalls + [recall]
         refined_precisions = refined_precisions + [refined_precision]
-        f.write('{ epoch: %s, precision: %s, recall: %s, refined precision: %s },' % (str(user_index), str(precision), str(recall), str(refined_precision)))
-        print('{ epoch: %s, precision: %s, recall: %s, refined precision: %s },' % (str(user_index), str(precision), str(recall), str(refined_precision)))
+        # Write the results to a JSON file
+        things1 = np.nonzero(y_pred)[0].astype('str')
+        things2 = np.nonzero(y_true)[0].astype('str')
+        y_pred_string = '[' + ', '.join(things1) + ']'
+        y_true_string = '[' + ', '.join(things2) + ']'
+        f.write('{ "epoch": %s, "precision": %s, "recall": %s, "refined_precision": %s, "y_true": %s, "y_pred": %s },' % (str(user_index), str(precision), str(recall), str(refined_precision), y_true_string, y_pred_string))
 
-f.write('{ precision: %s, recall: %s, refined precisions: %s } ]},' % (str(np.mean(precisions)), str(np.mean(recalls)), str(np.mean(refined_precisions))))
+# Delete the last trailing comma
+f.seek(f.tell() - 1, os.SEEK_SET)
+f.write('') 
+
+f.write(']')
 f.close()
 
 print('--------------------------------')
