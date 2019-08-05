@@ -21,7 +21,7 @@ data_items.head()
 projects = pd.read_pickle('data/processed/project_data')
 profile_projects = pd.read_pickle('data/processed/profile_projects_time_consistent')
 
-k_size = 5 # int(sys.argv[1])
+k_size = int(sys.argv[1])
 
 def calculate_similarity(data_items):
     data_sparse = sparse.csr_matrix(data_items)
