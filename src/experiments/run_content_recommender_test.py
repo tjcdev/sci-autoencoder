@@ -21,10 +21,10 @@ from content_recommender import ContentRecommender as Recommender
 from cf_data import load_users_projects
 from content_data import load_projects_tfidf, load_projects_doc2vec
 
-k = int(sys.argv[1])
-autoencoder_model = str(sys.argv[2]) # 'autoencoder_32_cdae_tfidf_desc'
-dataSource = str(sys.argv[3]) # 'tfidf' 
-field = str(sys.argv[4])
+k = 5 # int(sys.argv[1])
+autoencoder_model = 'train_autoencoder_32_cdae_tfidf_description' # str(sys.argv[2]) # 'autoencoder_32_cdae_tfidf_desc'
+dataSource = 'tfidf' #str(sys.argv[3]) # 'tfidf' 
+field = 'description' # str(sys.argv[4])
 
 # Load the autoencoder to use
 autoencoder = load_model('data/autoencoders/' + autoencoder_model + '.h5')
