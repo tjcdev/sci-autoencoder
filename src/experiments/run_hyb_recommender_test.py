@@ -20,7 +20,7 @@ sys.path.append(dir_path + 'data')
 sys.path.append(dir_path + 'src/models')
 from recommenders.cf_recommender import CFRecommender
 from data_models.cf_data import load_users_projects, load_new_users_projects, load_movies
-from data_models.content_data import load_projects_tfidf
+from data_models.content_data import load_cf_projects_tfidf
 from autoencoders import hyb2, hyb3
 from recommenders.content_recommender import ContentRecommender
 
@@ -34,19 +34,18 @@ if dataSource == 'new_users_projects':
     train_labels, train_x, val_labels, val_x, test_labels, test_x = load_new_users_projects()
 
 # Get the content data
-project_train_labels, project_train_x, project_val_labels, project_val_x, project_test_labels, project_test_x = load_projects_tfidf(field)
+project_train_labels, project_train_x, project_val_labels, project_val_x, project_test_labels, project_test_x = load_cf_projects_tfidf(field)
 x = vstack([project_train_x, project_val_x, project_test_x]).tocsr()
 x_projects = project_train_labels + project_val_labels + project_test_labels
 
 # Construct users TF-IDF
-users_tf_idf = np.load('data/processed/user-project-similarity.npy')
-'''
+users_tf_idf = None
 for user_index in range(0, train_x.shape[1]):
     user_project_idx = np.nonzero(train_x[:, user_index])[0]
     user_tf_idf = np.squeeze(np.asarray(x[user_project_idx].sum(axis=0)))
     users_tf_idf = vstack([users_tf_idf, user_tf_idf])
 users_tf_idf = sparse.csr_matrix(users_tf_idf)
-'''
+
 
 # Load the autoencoder to use
 model = load_model('data/autoencoders/' + autoencoder_model + '.h5')
