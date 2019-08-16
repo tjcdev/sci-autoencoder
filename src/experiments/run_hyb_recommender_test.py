@@ -24,10 +24,10 @@ from data_models.content_data import load_projects_tfidf
 from autoencoders import hyb2, hyb3
 from recommenders.content_recommender import ContentRecommender
 
-k = 10 # int(sys.argv[1])
-autoencoder_model = 'hyb3-sim' #str(sys.argv[2]) # 'train_autoencoder_32_cdae_users_projects'
-dataSource = 'new_users_projects' # str(sys.argv[3]) # 'movies' 
-field = 'description' #str(sys.argv[4])
+k = int(sys.argv[1])
+autoencoder_model = str(sys.argv[2]) # 'train_autoencoder_32_cdae_users_projects'
+dataSource = str(sys.argv[3]) # 'movies' 
+field = str(sys.argv[4])
 
 # Load the CF data
 if dataSource == 'new_users_projects':
