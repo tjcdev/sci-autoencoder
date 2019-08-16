@@ -31,13 +31,13 @@ from autoencoders import hyb2, hyb3
 # 32 100 0 hyb3 new_users_projects 0.8 description
 
 # Input Parameters for training our autoencoder
-batch_size = 32 #int(sys.argv[1]) # 32
-epochs = 30 #int(sys.argv[2]) # 100
-embedding_size = 32 #int(sys.argv[3]) # 32
-autoencoder_type = 'hyb2'# str(sys.argv[4]) # 'hyb1'
-dataSource = 'new_users_projects' #str(sys.argv[5]) # 'new_users_projects'
-q = 0.8 #float(sys.argv[6]) # 0.8
-field = 'description' #str(sys.argv[7]) # 'description'
+batch_size = int(sys.argv[1]) # 32
+epochs = int(sys.argv[2]) # 100
+embedding_size = int(sys.argv[3]) # 32
+autoencoder_type = str(sys.argv[4]) # 'hyb1'
+dataSource = str(sys.argv[5]) # 'new_users_projects'
+q = float(sys.argv[6]) # 0.8
+field = str(sys.argv[7]) # 'description'
 
 # Load out time consistent collaborative filtering data
 train_labels, train_x, val_labels, val_x, test_labels, test_x = load_new_users_projects()
