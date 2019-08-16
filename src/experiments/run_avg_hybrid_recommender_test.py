@@ -17,8 +17,8 @@ sys.path.append(dir_path + 'src/models/recommenders')
 from cf_recommender import CFRecommender
 
 # Load the autoencoder to use
-autoencoder_model = 'train_autoencoder_0_deep2_users_projects' #str(sys.argv[2])
-dataSource = 'users_projects' # str(sys.argv[3])
+autoencoder_model = 'train_autoencoder_0_deep3_new_users_projects_0.8' #str(sys.argv[2])
+dataSource = 'new_users_projects' # str(sys.argv[3])
 model = load_model('data/autoencoders/' + autoencoder_model + '.h5')
 projects = pd.read_pickle('data/processed/cf_projects_data')
 
@@ -27,10 +27,10 @@ from gensim.models import doc2vec
 from collections import namedtuple
 from sklearn.feature_extraction.text import TfidfVectorizer
 from keras.models import Model
-from cf_data import load_users_projects
+from cf_data import load_users_projects, load_new_users_projects
 from content_data import load_projects_tfidf, load_projects_doc2vec, load_cf_projects_tfidf
 
-k = int(sys.argv[1])
+k = 1 #int(sys.argv[1])
 
 # Load the autoencoder to use
 autoencoder_model = 'train_autoencoder_32_cdae_tfidf_description'
@@ -50,7 +50,7 @@ test = sparse.load_npz("data/processed/test.npz")
 recommender = ContentRecommender()
 similarity_matrix = recommender.similarity(x)
 
-train_labels, train_x, val_labels, val_x, test_labels, test_x = load_users_projects()
+train_labels, train_x, val_labels, val_x, test_labels, test_x = load_new_users_projects()
 
 precisions = []
 recalls = []
@@ -93,15 +93,15 @@ for profile_idx in range(0, len(train_labels)):
         result = pred + norm_cf_preds.iloc[i]
         sum_preds.loc[i] = result
         
-    top_5_idx = sum_preds.sort_values(ascending=False).head(5).index
+    top_5_project_ids = sum_preds.sort_values(ascending=False).head(k).index
     
-    top_5_project_ids = train_labels.iloc[top_5_idx].values.flatten()
+    top_5_idx = train_labels[train_labels[0].isin(top_5_project_ids)].index
     
     y_true = np.squeeze(np.asarray(test_x.getcol(profile_idx).todense())).reshape(1,-1)
 
     y_true = np.squeeze(np.asarray(y_true))
 
-    predicted_projects = top_5_project_ids
+    predicted_projects = top_5_idx
     y_pred = np.zeros(y_true.shape)
     y_pred[predicted_projects] = 1
     

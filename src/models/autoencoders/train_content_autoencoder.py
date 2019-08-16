@@ -11,7 +11,7 @@ import DEEP
 # Importing our data models
 dir_path = os.path.dirname(os.path.realpath(__file__))[:-23]
 sys.path.append(dir_path + 'data/data_models')
-from content_data import load_projects_doc2vec, load_projects_tfidf 
+from content_data import load_cf_projects_doc2vec, load_cf_projects_tfidf 
 from cf_data import load_users_projects, load_movies, load_profile_labels
 
 # Input Parameters for training our autoencoder
@@ -25,10 +25,10 @@ field = str(sys.argv[6])
 # Load the data
 loadData = None
 if dataSource == 'tfidf':
-    train_labels, train_x, val_labels, val_x, test_labels, test_x = load_projects_tfidf(field)
+    train_labels, train_x, val_labels, val_x, test_labels, test_x = load_cf_projects_tfidf(field)
 
 if dataSource == 'doc2vec':
-    train_labels, train_x, val_labels, val_x, test_labels, test_x = load_projects_doc2vec(field)
+    train_labels, train_x, val_labels, val_x, test_labels, test_x = load_cf_projects_doc2vec(field)
 
 
 autoencoder = None

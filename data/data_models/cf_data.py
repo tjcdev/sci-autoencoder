@@ -37,13 +37,13 @@ def load_profile_labels():
 
     return cf_profiles
 
-def load_new_users_projects():
-    cf = pd.read_pickle('data/processed/new_cf_projects.pkl')
+def load_new_users_projects(base_path = ''):
+    cf = pd.read_pickle(base_path + 'data/processed/new_cf_projects.pkl')
     #cf = pd.read_pickle('data/processed/cf_profiles.pkl')
 
-    train_x = sparse.load_npz("data/processed/new_train_sparse.npz")
-    val_x = sparse.load_npz("data/processed/new_val_sparse.npz")
-    test_x = sparse.load_npz("data/processed/new_test_sparse.npz")
+    train_x = sparse.load_npz(base_path + "data/processed/new_train_sparse.npz")
+    val_x = sparse.load_npz(base_path + "data/processed/new_val_sparse.npz")
+    test_x = sparse.load_npz(base_path + "data/processed/new_test_sparse.npz")
     
     train_labels = cf
     val_labels = cf
@@ -51,8 +51,8 @@ def load_new_users_projects():
 
     return train_labels, train_x, val_labels, val_x, test_labels, test_x
 
-def load_new_profile_labels():
-    cf_profiles = pd.read_pickle('data/processed/new_cf_profiles.pkl')
+def load_new_profile_labels(base_path = ''):
+    cf_profiles = pd.read_pickle(base_path + 'data/processed/new_cf_profiles.pkl')
 
     return cf_profiles
 

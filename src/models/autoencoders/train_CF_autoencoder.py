@@ -13,6 +13,8 @@ import deep_1
 import deep_2
 import deep_3
 import deep_4
+import deep_5
+import deep_6
 
 # Importing our data models
 dir_path = os.path.dirname(os.path.realpath(__file__))[:-23]
@@ -21,12 +23,12 @@ from content_data import load_projects_doc2vec, load_projects_tfidf
 from cf_data import load_users_projects, load_new_users_projects, load_movies, load_profile_labels, load_new_profile_labels
 
 # Input Parameters for training our autoencoder
-batch_size = int(sys.argv[1])
-epochs = int(sys.argv[2])
-embedding_size = int(sys.argv[3])
-autoencoder_type = str(sys.argv[4])
-dataSource = str(sys.argv[5])
-q = float(sys.argv[6])
+batch_size = 32 #int(sys.argv[1])
+epochs = 30 #int(sys.argv[2])
+embedding_size = 0 #int(sys.argv[3])
+autoencoder_type = 'deep6' #str(sys.argv[4])
+dataSource = 'new_users_projects' #str(sys.argv[5])
+q = 0.8 #float(sys.argv[6])
 
 # Load the data
 loadData = None
@@ -75,6 +77,12 @@ if autoencoder_type == 'deep3':
 
 if autoencoder_type == 'deep4':
     autoencoder = deep_4
+
+if autoencoder_type == 'deep5':
+    autoencoder = deep_5
+
+if autoencoder_type == 'deep6':
+    autoencoder = deep_6
 
 # Create our autoencoder model
 model = autoencoder.create(I=I, U=U, K=embedding_size,

@@ -10,15 +10,20 @@ import pandas as pd
 import math
 import keras.backend as K
 
+def get_weighted_loss():
+    def weighted_loss(y_true, y_pred):
+        return K.mean((0.01*(1-y_true))*(0.99*(y_true))*K.binary_crossentropy(y_true, y_pred), axis=-1)
+    return weighted_loss
+
 dir_path = os.path.dirname(os.path.realpath(__file__))[:-15]
 sys.path.append(dir_path + 'data')
 sys.path.append(dir_path + 'src/models')
 from recommenders.cf_recommender import CFRecommender
 from data_models.cf_data import load_users_projects, load_new_users_projects, load_movies
 
-k = int(sys.argv[1])
-autoencoder_model = str(sys.argv[2]) # 'train_autoencoder_32_cdae_users_projects'
-dataSource = str(sys.argv[3]) # 'movies' 
+k = 10 # int(sys.argv[1])
+autoencoder_model = 'deep3-custom_loss-1-example' #str(sys.argv[2]) # 'train_autoencoder_32_cdae_users_projects'
+dataSource = 'new_users_projects'# str(sys.argv[3]) # 'movies' 
 
 # Load the autoencoder to use
 model = load_model('data/autoencoders/' + autoencoder_model + '.h5')
@@ -52,6 +57,8 @@ for profile_idx in range(0, train_x.shape[1]):
 
     # Get the Top-K Recommendataions
     recommendations = recommender.top_projects(profile_col, predictions, train_labels)
+
+    things = recommendations
 
     # Generate the y_pred and y_true for evaluation
     if val_x != None:

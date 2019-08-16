@@ -68,7 +68,7 @@ def load_cf_projects_tfidf(field):
 
     return content_train_labels, content_train_x, content_val_labels, content_val_x, content_test_labels, content_test_x
 
-def load_projects_doc2vec(field):
+def load_cf_projects_doc2vec(field):
     # Load the full project data from the pickle file
     projects = pd.read_pickle("data/processed/project_data")
 
