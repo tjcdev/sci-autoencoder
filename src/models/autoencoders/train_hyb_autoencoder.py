@@ -22,7 +22,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))[:-23]
 sys.path.append(dir_path + 'data/data_models')
 sys.path.append(dir_path + 'src/models')
 
-from content_data import load_projects_doc2vec, load_projects_tfidf 
+from content_data import load_cf_projects_doc2vec, load_cf_projects_tfidf 
 from cf_data import load_users_projects, load_new_users_projects, load_movies, load_profile_labels, load_new_profile_labels
 from recommenders.cf_recommender import CFRecommender
 from recommenders.content_recommender import ContentRecommender
@@ -31,13 +31,13 @@ from autoencoders import hyb2, hyb3
 # 32 100 0 hyb3 new_users_projects 0.8 description
 
 # Input Parameters for training our autoencoder
-batch_size = int(sys.argv[1]) # 32
-epochs = int(sys.argv[2]) # 100
-embedding_size = int(sys.argv[3]) # 32
-autoencoder_type = str(sys.argv[4]) # 'hyb1'
-dataSource = str(sys.argv[5]) # 'new_users_projects'
-q = float(sys.argv[6]) # 0.8
-field = str(sys.argv[7]) # 'description'
+batch_size = 32 #int(sys.argv[1]) # 32
+epochs = 30 #int(sys.argv[2]) # 100
+embedding_size = 32 #int(sys.argv[3]) # 32
+autoencoder_type = 'hyb2'# str(sys.argv[4]) # 'hyb1'
+dataSource = 'new_users_projects' #str(sys.argv[5]) # 'new_users_projects'
+q = 0.8 #float(sys.argv[6]) # 0.8
+field = 'description' #str(sys.argv[7]) # 'description'
 
 # Load out time consistent collaborative filtering data
 train_labels, train_x, val_labels, val_x, test_labels, test_x = load_new_users_projects()
@@ -45,7 +45,7 @@ U = train_x.shape[1]
 I = train_x.shape[0]
 
 # Load content data
-project_train_labels, project_train_x, project_val_labels, project_val_x, project_test_labels, project_test_x = load_projects_tfidf(field)
+project_train_labels, project_train_x, project_val_labels, project_val_x, project_test_labels, project_test_x = load_cf_projects_tfidf(field)
 
 # Generate the embeddings
 x = vstack([project_train_x, project_val_x, project_test_x]).tocsr()
@@ -60,14 +60,14 @@ if autoencoder_type == 'hyb3':
     autoencoder = hyb3
 
 # Create a TF_IDF matrix for all users
-users_tf_idf = np.load('data/processed/user-project-similarity.npy')
-'''
+#users_tf_idf = np.load('data/processed/user-project-similarity.npy')
+users_tf_idf = None
 for user_index in range(0, train_x.shape[1]):
     user_project_idx = np.nonzero(train_x[:, user_index])[0]
     user_tf_idf = np.squeeze(np.asarray(x[user_project_idx].sum(axis=0)))
     users_tf_idf = vstack([users_tf_idf, user_tf_idf])
 users_tf_idf = sparse.csr_matrix(users_tf_idf)
-'''
+
 
 # Create the autoencoder
 model = autoencoder.create(I=I, U=U, K=embedding_size,

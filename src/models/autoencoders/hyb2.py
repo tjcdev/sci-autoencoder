@@ -20,7 +20,7 @@ def create(I, U, K, hidden_activation, output_activation, q=0.5, l=0.01):
     h_item = Dense(K, W_regularizer=l2(l), b_regularizer=l2(l))(h_item)
 
     # Content Based Data (text vectors)
-    content_item = Input((1021,), name='content_item')
+    content_item = Input((1174,), name='content_item')
     h_content = Dense(K, W_regularizer=l2(l), b_regularizer=l2(l))(content_item)
 
     # Other input
