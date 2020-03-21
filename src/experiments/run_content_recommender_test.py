@@ -19,12 +19,12 @@ sys.path.append(dir_path + 'src/models/recommenders')
 
 from content_recommender import ContentRecommender as Recommender
 from cf_data import load_users_projects
-from content_data import load_cf_projects_tfidf, load_cf_projects_doc2vec
+from content_data import load_projects_tfidf, load_projects_doc2vec
 
-k = int(sys.argv[1])
-autoencoder_model = str(sys.argv[2]) # 'autoencoder_32_cdae_tfidf_desc'
-dataSource = str(sys.argv[3]) # 'tfidf' 
-field = str(sys.argv[4])
+k = 1 #int(sys.argv[1])
+autoencoder_model = 'train_autoencoder_32_cdae_tfidf_description' #str(sys.argv[2]) # 'autoencoder_32_cdae_tfidf_desc'
+dataSource = 'tfidf'  #str(sys.argv[3]) # 'tfidf' 
+field = 'description' # str(sys.argv[4])
 
 # Load the autoencoder to use
 autoencoder = load_model('data/autoencoders/' + autoencoder_model + '.h5')
@@ -32,9 +32,9 @@ autoencoder = load_model('data/autoencoders/' + autoencoder_model + '.h5')
 # Load the project data
 loadData = None
 if dataSource == 'tfidf':
-    loadData = load_cf_projects_tfidf
+    loadData = load_projects_tfidf
 if dataSource == 'doc2vec':
-    loadData = load_cf_projects_doc2vec
+    loadData = load_projects_doc2vec
 
 project_train_labels, project_train_x, project_val_labels, project_val_x, project_test_labels, project_test_x = loadData(field)
 
@@ -47,8 +47,8 @@ other_x = np.array(x_projects.index, dtype=np.int32).reshape(len(x_projects), 1)
 embeddings = embed_model.predict(x=[x, other_x])
 embeddings = embeddings.reshape(len(x_projects), embedding_size)
 
-train = sparse.load_npz("data/processed/train.npz")
-test = sparse.load_npz("data/processed/test.npz")
+train = sparse.load_npz("data/processed/train_sparse.npz")
+test = sparse.load_npz("data/processed/test_sparse.npz")
 
 # Build our recommender and similarity matrix
 recommender = Recommender()

@@ -11,21 +11,21 @@ import deep_1
 # Importing our data models
 dir_path = os.path.dirname(os.path.realpath(__file__))[:-23]
 sys.path.append(dir_path + 'data/data_models')
-from content_data import load_cf_projects_doc2vec, load_cf_projects_tfidf 
+from content_data import load_cf_projects_doc2vec, load_projects_tfidf 
 from cf_data import load_users_projects, load_movies, load_profile_labels
 
 # Input Parameters for training our autoencoder
-batch_size = int(sys.argv[1])
-epochs = int(sys.argv[2])
-embedding_size = int(sys.argv[3])
-autoencoder_type = str(sys.argv[4])
-dataSource = str(sys.argv[5])
-field = str(sys.argv[6])
+batch_size = 32 #int(sys.argv[1])
+epochs = 30 #int(sys.argv[2])
+embedding_size = 128 #int(sys.argv[3])
+autoencoder_type = 'cdae' #str(sys.argv[4])
+dataSource = 'tfidf' #str(sys.argv[5])
+field = 'description' # str(sys.argv[6])
 
 # Load the data
 loadData = None
 if dataSource == 'tfidf':
-    train_labels, train_x, val_labels, val_x, test_labels, test_x = load_cf_projects_tfidf(field)
+    train_labels, train_x, val_labels, val_x, test_labels, test_x = load_projects_tfidf(field)
 
 if dataSource == 'doc2vec':
     train_labels, train_x, val_labels, val_x, test_labels, test_x = load_cf_projects_doc2vec(field)
